@@ -19,6 +19,7 @@ const theme = extendTheme({
   colors: {
     primaryBlue: "#022D6D",
     darkBlue: "#012457",
+    coldBlue: "#F9F9F9",
     primaryYellow: "#FFBF00",
     primaryGray: "#6b7280",
   },

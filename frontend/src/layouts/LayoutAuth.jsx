@@ -73,7 +73,7 @@ const LayoutAuth = ({ children }) => {
           justifyContent="center"
         >
           <Box display="flex" justifyContent="center" mb={6}>
-            <img src="/logo-vertikal.jpg" alt="Logo" width="150px" />
+            <img src="/logo-vertikal-blue.png" alt="Logo" width="150px" />
           </Box>
           {children}
         </Box>
