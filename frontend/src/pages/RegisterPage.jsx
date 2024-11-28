@@ -1,5 +1,6 @@
 import LayoutAuth from "../layouts/LayoutAuth";
 import {
+  chakra,
   Box,
   Button,
   Heading,
@@ -23,12 +24,12 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   return (
     <LayoutAuth>
-      <Heading size="xl" textAlign="center" mb={3} color="#022D6D">
+      <Heading size="xl" textAlign="center" mb={3} color="primaryBlue">
         Register
       </Heading>
       <Box
         w="30%"
-        borderColor="#FFBF00"
+        borderColor="primaryYellow"
         boxShadow="md"
         mb={14}
         borderBottomWidth={3}
@@ -41,7 +42,7 @@ const RegisterPage = () => {
         <InputGroup size="lg" mb={4}>
           <InputLeftElement
             pointerEvents="none"
-            color={useColorModeValue("gray.500")}
+            color={useColorModeValue("primaryGray")}
             fontSize="1.25rem"
           >
             <FaUser />
@@ -50,7 +51,7 @@ const RegisterPage = () => {
             id="name"
             placeholder="user"
             type="text"
-            focusBorderColor="#022D6D"
+            focusBorderColor="primaryBlue"
           />
         </InputGroup>
         <HStack mb={2}>
@@ -59,7 +60,7 @@ const RegisterPage = () => {
         <InputGroup size="lg" mb={4}>
           <InputLeftElement
             pointerEvents="none"
-            color={useColorModeValue("gray.500")}
+            color={useColorModeValue("primaryGray")}
             fontSize="1.25rem"
           >
             <FaEnvelope />
@@ -68,7 +69,7 @@ const RegisterPage = () => {
             id="email"
             placeholder="username@example.com"
             type="email"
-            focusBorderColor="#022D6D"
+            focusBorderColor="primaryBlue"
           />
         </InputGroup>{" "}
         <HStack mb={2}>
@@ -78,7 +79,7 @@ const RegisterPage = () => {
           placeholder="Select role"
           size="lg"
           mb={4}
-          focusBorderColor="#022D6D"
+          focusBorderColor="primaryBlue"
         >
           <option value="STUDENT">Student</option>
           <option value="HANDLER">Handler</option>
@@ -89,7 +90,7 @@ const RegisterPage = () => {
         <InputGroup size="lg" mb={4}>
           <InputLeftElement
             pointerEvents="none"
-            color={useColorModeValue("gray.500")}
+            color={useColorModeValue("primaryGray")}
             fontSize="1.25rem"
           >
             <FaLock />
@@ -98,7 +99,7 @@ const RegisterPage = () => {
             id="password"
             placeholder="Password"
             type="password"
-            focusBorderColor="#022D6D"
+            focusBorderColor="primaryBlue"
           />
         </InputGroup>
         <HStack mb={2}>
@@ -107,7 +108,7 @@ const RegisterPage = () => {
         <InputGroup size="lg" mb={14}>
           <InputLeftElement
             pointerEvents="none"
-            color={useColorModeValue("gray.500")}
+            color={useColorModeValue("primaryGray")}
             fontSize="1.25rem"
           >
             <FaLock />
@@ -116,14 +117,14 @@ const RegisterPage = () => {
             id="retypePassword"
             placeholder="Retype Password"
             type="password"
-            focusBorderColor="#022D6D"
+            focusBorderColor="primaryBlue"
           />
         </InputGroup>
         <Button
           rightIcon={<FaArrowRightFromBracket />}
           color={"white"}
-          backgroundColor="#022D6D"
-          _hover={{ bg: "#012457" }}
+          backgroundColor="primaryBlue"
+          _hover={{ bg: "darkBlue" }}
           type="submit"
           size="lg"
           w="full"
@@ -134,16 +135,18 @@ const RegisterPage = () => {
         <Text
           fontSize="sm"
           textAlign="center"
-          color={useColorModeValue("gray.600", "gray.400")}
+          color={useColorModeValue("primaryGray")}
           mt={2}
         >
           Do you already have an account?{" "}
-          <a
+          <chakra.a
             onClick={() => navigate("/login")}
-            style={{ color: "#022D6D", cursor: "pointer" }}
+            color="primaryBlue"
+            cursor="pointer"
+            _hover={{ color: "darkBlue", textDecoration: "underline" }}
           >
             Login
-          </a>
+          </chakra.a>
         </Text>
       </form>
     </LayoutAuth>

@@ -15,7 +15,7 @@ const LayoutAuth = ({ children }) => {
   return (
     <Flex h="100vh" w="full" alignItems="center" justifyContent="center">
       <Flex
-        w={{ base: "90%", md: "900px" }}
+        w={{ sm: "90%", md: "900px" }}
         h="auto"
         boxShadow="xl"
         borderRadius="md"
@@ -23,7 +23,7 @@ const LayoutAuth = ({ children }) => {
       >
         <Box
           w="50%"
-          bgGradient="linear(to-b, #FFBF00, #022D6D)"
+          bgGradient="linear(to-b, primaryYellow, primaryBlue)"
           color="white"
           p={8}
           display="flex"
@@ -51,8 +51,8 @@ const LayoutAuth = ({ children }) => {
             size="lg"
             w="full"
             _hover={{
-              borderColor: "#012457",
-              color: "#012457",
+              borderColor: "darkBlue",
+              color: "darkBlue",
             }}
             rounded={"2xl"}
             onClick={() =>
@@ -67,7 +67,7 @@ const LayoutAuth = ({ children }) => {
         <Box
           w="50%"
           p={7}
-          bg={useColorModeValue("white", "gray.700")}
+          bg={useColorModeValue("white")}
           display="flex"
           flexDirection="column"
           justifyContent="center"
