@@ -66,6 +66,7 @@ const userController = {
 
       const user = await User.findById(req.user._id).select("-password");
 
+      // Handle image upload if file exists
       if (req.file) {
         const formData = new FormData();
         const imageFile = fs.createReadStream(req.file.path);
@@ -81,10 +82,12 @@ const userController = {
 
         if (response.data.success) {
           user.photo_url = response.data.data.url;
+          // Clean up uploaded file
           fs.unlinkSync(req.file.path);
         }
       }
 
+      // Update other fields if provided
       if (password) {
         user.password = password;
       }
@@ -99,6 +102,7 @@ const userController = {
 
       ResponseAPI.success(res, user);
     } catch (error) {
+      // Clean up uploaded file if exists
       if (req.file && fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
       }
