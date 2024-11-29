@@ -8,11 +8,11 @@ const Footer = () => {
       bg="white"
       display="flex"
       alignItems="center"
-      justifyContent="center"
+      justifyContent="end"
       mt="auto"
       bottom="0"
     >
-      <Text fontSize="sm" color="primaryBlue">
+      <Text fontSize="sm" color="primaryBlue" mr={5}>
         © {new Date().getFullYear()} iTicket. All rights reserved.
       </Text>
     </Box>
