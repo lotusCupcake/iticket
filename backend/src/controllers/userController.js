@@ -78,9 +78,12 @@ const userController = {
             ...formData.getHeaders(),
           },
         });
-
+        console.log(response.data);
         if (response.data.success) {
-          user.photo = response.data.data.url;
+          user.photo = response.data.data.url.replace(
+            "i.ibb.co/",
+            "i.ibb.co.com/"
+          );
           fs.unlinkSync(req.file.path);
         }
       }
