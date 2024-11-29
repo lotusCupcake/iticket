@@ -34,7 +34,7 @@ const Sidebar = ({ navSize, changeNavSize }) => {
       w={navSize == "small" ? "75px" : "220px"}
       flexDir="column"
       justifyContent="space-between"
-      zIndex="1000"
+      zIndex="2000"
     >
       <Flex
         p="5%"
@@ -64,13 +64,8 @@ const Sidebar = ({ navSize, changeNavSize }) => {
             }}
           />
         </Flex>
-        <NavItem navSize={navSize} icon={FaShapes} title="Categories" />
-        <NavItem
-          navSize={navSize}
-          icon={FaListCheck}
-          title="Assign Issues"
-          active
-        />
+        <NavItem navSize={navSize} icon={FaShapes} title="Categories" active />
+        <NavItem navSize={navSize} icon={FaListCheck} title="Assign Issues" />
         <NavItem navSize={navSize} icon={FaUsers} title="Accounts" />
       </Flex>
 
