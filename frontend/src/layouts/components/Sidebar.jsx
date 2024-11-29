@@ -28,7 +28,7 @@ const Sidebar = ({ navSize, changeNavSize }) => {
       left="0"
       top="0"
       h="100vh"
-      backgroundColor={"primaryBlue"}
+      backgroundImage="linear-gradient(to right, darkBlue, primaryBlue)"
       boxShadow="2xl"
       borderRadius={navSize == "small" ? "0 15px 15px 0" : "0 30px 30px 0"}
       w={navSize == "small" ? "75px" : "220px"}
