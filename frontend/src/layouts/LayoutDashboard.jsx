@@ -1,8 +1,10 @@
 import {
+  Avatar,
   Box,
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   Flex,
   FormControl,
@@ -29,7 +31,7 @@ import {
 } from "@chakra-ui/react";
 import { Header, Sidebar, Footer } from "./components";
 import { useState } from "react";
-import { FaPen, FaPlus, FaTrash } from "react-icons/fa6";
+import { FaFloppyDisk, FaPen, FaPlus, FaTrash } from "react-icons/fa6";
 const LayoutDashboard = () => {
   const [navSize, setNavSize] = useState("large");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -48,12 +50,13 @@ const LayoutDashboard = () => {
       <Header />
       <Box
         ml={navSize === "small" ? "75px" : "220px"}
-        mt="20"
+        // mt="20"
+        mt="40"
         mb="16"
         p={4}
         height="full"
       >
-        <Card boxShadow="md">
+        {/* <Card boxShadow="md">
           <CardHeader>
             <Flex justify="space-between" align="center">
               <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
@@ -171,6 +174,49 @@ const LayoutDashboard = () => {
               </ModalFooter>
             </ModalContent>
           </Modal>
+        </Card> */}
+
+        <Card width="30%" boxShadow="md" mx="auto">
+          <CardHeader>
+            <Flex alignItems="center" justifyContent="center">
+              <Avatar size="xl" src="https://bit.ly/broken-link" />
+            </Flex>
+          </CardHeader>
+          <hr />
+          <CardBody display="flex" flexDirection="column" gap={4}>
+            <Text fontSize={"lg"} fontWeight={"bold"}>
+              Personal Info
+            </Text>
+            <FormControl isRequired>
+              <FormLabel>Photo</FormLabel>
+              <Input type="file" focusBorderColor="lightBlue" />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input focusBorderColor="lightBlue" />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Role</FormLabel>
+              <Input focusBorderColor="lightBlue" />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input type="password" focusBorderColor="lightBlue" />
+            </FormControl>
+          </CardBody>
+          <CardFooter>
+            <Flex width="full" justifyContent="flex-end">
+              <Button
+                leftIcon={<FaFloppyDisk />}
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                size="md"
+              >
+                Save Changes
+              </Button>
+            </Flex>
+          </CardFooter>
         </Card>
       </Box>
       <Footer />
