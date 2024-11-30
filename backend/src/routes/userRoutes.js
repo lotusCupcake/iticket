@@ -20,5 +20,11 @@ router.put(
   upload.single("photo"),
   userController.updateProfile
 );
+router.put(
+  "/activate-user/:id",
+  authentication,
+  authorizeRoles([ROLES.ADMIN]),
+  userController.activateUser
+);
 
 module.exports = router;
