@@ -20,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRoutes); // User routes
 app.use("/api/categories", categoryRoutes); // Kategori routes
+// app.use("/api", activasiRouterRoutes); // Kategori routes
 
 // Error handler middleware
 app.use(errorHandler);

@@ -109,6 +109,7 @@ const userController = {
   },
 
   async register(req, res, next) {
+    ``;
     try {
       const salt = bcrypt.genSaltSync();
 
@@ -123,6 +124,24 @@ const userController = {
       ResponseAPI.success(res, user);
     } catch (error) {
       next(error);
+    }
+  },
+  async activateUser(req, res, next) {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+
+      if (!user) {
+        return ResponseAPI.error(res, "User  not found", 404);
+      }
+
+      user.isActive = true;
+      await user.save();
+
+      return ResponseAPI.success(res, user, "User  activated successfully");
+    } catch (error) {
+      console.error("Error activate User:", error);
+      return next(error);
     }
   },
 };

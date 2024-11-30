@@ -75,7 +75,7 @@ const categoryController = {
   // Function to delete a category
   async deleteCategory(req, res, next) {
     try {
-      const { id } = req.params; // Destructure ID from params
+      const { id } = req.params;
 
       if (!id) {
         return ResponseAPI.error(res, "ID not provided!", 400);
@@ -95,7 +95,7 @@ const categoryController = {
   },
 };
 
-// Function to validate ObjectId (optional)
+// Function to validate ObjectId
 const isValidObjectId = (id) => {
   return /^[0-9a-fA-F]{24}$/.test(id);
 };
