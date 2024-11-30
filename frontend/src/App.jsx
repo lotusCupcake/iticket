@@ -1,5 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { DashboardPage, LoginPage, RegisterPage } from "./pages";
+import {
+  AccountsPage,
+  AssignIssuesPage,
+  CategoriesPage,
+  HandlingIssuesPage,
+  LoginPage,
+  MyTicketsPage,
+  ProfilePage,
+  RegisterPage,
+} from "./pages";
 
 const router = createBrowserRouter([
   {
@@ -11,8 +20,28 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/",
-    element: <DashboardPage />,
+    path: "/categories",
+    element: <CategoriesPage />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
+    path: "/assign-issues",
+    element: <AssignIssuesPage />,
+  },
+  {
+    path: "/handling-issues",
+    element: <HandlingIssuesPage />,
+  },
+  {
+    path: "/my-tickets",
+    element: <MyTicketsPage />,
+  },
+  {
+    path: "/accounts",
+    element: <AccountsPage />,
   },
 ]);
 function App() {
