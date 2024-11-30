@@ -75,6 +75,7 @@ const LoginPage = () => {
           size="lg"
           w="full"
           rounded={"2xl"}
+          onClick={() => navigate("/assign-issues")}
         >
           Sign In
         </Button>

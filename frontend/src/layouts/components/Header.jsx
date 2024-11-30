@@ -1,6 +1,8 @@
 import { Avatar, Box } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <Box
       w="full"
@@ -14,7 +16,12 @@ const Header = () => {
       px={4}
       boxShadow="md"
     >
-      <Avatar bg="primaryGray" size="md" src="https://bit.ly/broken-link" />
+      <Avatar
+        cursor="pointer"
+        size="md"
+        src="https://bit.ly/broken-link"
+        onClick={() => navigate("/profile")}
+      />
     </Box>
   );
 };

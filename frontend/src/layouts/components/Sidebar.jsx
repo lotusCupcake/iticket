@@ -10,7 +10,7 @@ import {
   Icon,
   Tooltip,
 } from "@chakra-ui/react";
-import NavItem from "./MenuItem";
+import MenuItem from "./MenuItem";
 import {
   FaArrowRightFromBracket,
   FaChevronLeft,
@@ -19,8 +19,11 @@ import {
   FaShapes,
   FaUsers,
 } from "react-icons/fa6";
+import { useLocation, useNavigate } from "react-router-dom";
 const Sidebar = ({ navSize, changeNavSize }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Flex
@@ -64,9 +67,27 @@ const Sidebar = ({ navSize, changeNavSize }) => {
             }}
           />
         </Flex>
-        <NavItem navSize={navSize} icon={FaShapes} title="Categories" active />
-        <NavItem navSize={navSize} icon={FaListCheck} title="Assign Issues" />
-        <NavItem navSize={navSize} icon={FaUsers} title="Accounts" />
+        <MenuItem
+          navSize={navSize}
+          icon={FaShapes}
+          title="Categories"
+          active={location.pathname === "/categories"}
+          handlingNavigate={() => navigate("/categories")}
+        />
+        <MenuItem
+          navSize={navSize}
+          icon={FaListCheck}
+          title="Assign Issues"
+          active={location.pathname === "/assign-issues"}
+          handlingNavigate={() => navigate("/assign-issues")}
+        />
+        <MenuItem
+          navSize={navSize}
+          icon={FaUsers}
+          title="Accounts"
+          active={location.pathname === "/accounts"}
+          handlingNavigate={() => navigate("/accounts")}
+        />
       </Flex>
 
       <Flex
@@ -97,6 +118,7 @@ const Sidebar = ({ navSize, changeNavSize }) => {
                 w={navSize == "large" && "100%"}
                 onMouseEnter={() => navSize == "small" && setIsHovered(true)}
                 onMouseLeave={() => navSize == "small" && setIsHovered(false)}
+                onClick={() => navigate("/login")}
               >
                 <MenuButton w="100%">
                   <Flex color={"coldBlue"}>

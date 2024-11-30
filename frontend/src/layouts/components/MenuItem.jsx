@@ -9,8 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 
-export default function MenuItem({ icon, title, active, navSize }) {
+export default function MenuItem({
+  icon,
+  title,
+  active,
+  navSize,
+  handlingNavigate,
+}) {
   const [isHovered, setIsHovered] = useState(false);
+
   return (
     <Flex
       mt={30}
@@ -36,6 +43,7 @@ export default function MenuItem({ icon, title, active, navSize }) {
             w={navSize == "large" && "100%"}
             onMouseEnter={() => navSize == "small" && setIsHovered(true)}
             onMouseLeave={() => navSize == "small" && setIsHovered(false)}
+            onClick={handlingNavigate}
           >
             <MenuButton w="100%">
               <Flex color={active ? "primaryBlue" : "coldBlue"}>
