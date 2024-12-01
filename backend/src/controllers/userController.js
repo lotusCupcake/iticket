@@ -72,7 +72,7 @@ const userController = {
       );
 
       if (req.file) {
-        const urlUploadResult = await imageUpload(req.file);
+        const urlUploadResult = await imageUpload(req.file, user.photo);
 
         user.photo = urlUploadResult;
       }
