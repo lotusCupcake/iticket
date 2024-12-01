@@ -43,7 +43,7 @@ const userController = {
           name: user.name,
           email: user.email,
           photo: user.photo,
-          type: user.type,
+          role: user.role,
         },
       });
     } catch (error) {
@@ -53,7 +53,9 @@ const userController = {
 
   async getProfile(req, res, next) {
     try {
-      const user = await User.findById(req.user._id).select("-password");
+      const user = await User.findById(req.user._id).select(
+        "-password -password_salt"
+      );
       ResponseAPI.success(res, user);
     } catch (error) {
       next(error);
@@ -64,7 +66,9 @@ const userController = {
     try {
       const { name, email, password } = req.body;
 
-      const user = await User.findById(req.user._id).select("-password");
+      const user = await User.findById(req.user._id).select(
+        "-password -password_salt"
+      );
 
       if (req.file) {
         const formData = new FormData();
@@ -117,10 +121,14 @@ const userController = {
         password: req.body.password,
         password_salt: salt,
         email: req.body.email,
-        type: req.body.type,
+        role: req.body.role,
       });
 
-      ResponseAPI.success(res, user);
+      const userResponse = await User.findById(user._id).select(
+        "-password -password_salt"
+      );
+
+      ResponseAPI.success(res, userResponse);
     } catch (error) {
       next(error);
     }

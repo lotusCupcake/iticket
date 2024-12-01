@@ -68,12 +68,10 @@ const seedDatabase = async () => {
     console.log("Previous categories cleared");
 
     // Create users
-    const createdUsers = await User.create(users);
-    console.log("Users seeded:", createdUsers);
+    await User.create(users);
 
     // Create categories
-    const createdCategories = await Category.insertMany(categories);
-    console.log("Categories seeded:", createdCategories);
+    await Category.insertMany(categories);
 
     // Successfully seeded
     console.log("Database seeded successfully!");
