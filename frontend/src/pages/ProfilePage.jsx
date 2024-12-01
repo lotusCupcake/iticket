@@ -86,7 +86,12 @@ const ProfilePage = () => {
       <Card width="30%" boxShadow="md" mx="auto">
         <CardHeader>
           <Flex alignItems="center" justifyContent="center">
-            <Avatar name={user?.name} size="xl" src={user?.photo} />
+            <Avatar
+              name={user?.name}
+              size="xl"
+              src={user?.photo}
+              shadow={"md"}
+            />
           </Flex>
         </CardHeader>
         <hr />
