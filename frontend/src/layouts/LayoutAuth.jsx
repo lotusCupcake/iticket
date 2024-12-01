@@ -6,7 +6,7 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaArrowRightToBracket } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const LayoutAuth = ({ children }) => {
@@ -45,7 +45,7 @@ const LayoutAuth = ({ children }) => {
             Your Expertize, Ther Solution
           </Text>
           <Button
-            rightIcon={<FaArrowRightFromBracket />}
+            rightIcon={<FaArrowRightToBracket />}
             colorScheme="white"
             variant="outline"
             size="lg"

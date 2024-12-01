@@ -11,17 +11,86 @@ import {
   Select,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import {
-  FaArrowRightFromBracket,
+  FaArrowRightToBracket,
   FaEnvelope,
   FaLock,
   FaUser,
 } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { userApi } from "../api/userApi";
+import { useState } from "react";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const [formValues, setFormValues] = useState({
+    name: "",
+    email: "",
+    role: "",
+    password: "",
+    retypePassword: "",
+  });
+
+  const toast = useToast();
+
+  const onHandleRegister = async (e) => {
+    e.preventDefault();
+
+    const { name, email, role, password, retypePassword } = formValues;
+
+    if (password !== retypePassword) {
+      toast({
+        title: "Password Tidak Sama.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      return;
+    }
+
+    console.log(name, email, role, password, retypePassword);
+    try {
+      await userApi.register(name, email, role, password);
+
+      navigate("/login");
+
+      setFormValues({
+        name: "",
+        email: "",
+        role: "",
+        password: "",
+        retypePassword: "",
+      });
+
+      toast({
+        title: "Register Berhasil, Harap Tunggu Sampai Admin Menyetujui.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    } catch (error) {
+      toast({
+        title: "Failed to Register, " + error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
   return (
     <LayoutAuth>
       <Heading size="xl" textAlign="center" mb={3} color="primaryBlue">
@@ -35,7 +104,7 @@ const RegisterPage = () => {
         borderBottomWidth={3}
         mx="auto"
       ></Box>
-      <form>
+      <form onSubmit={onHandleRegister}>
         <HStack mb={2}>
           <label htmlFor="name">Name</label>
         </HStack>
@@ -48,10 +117,13 @@ const RegisterPage = () => {
             <FaUser />
           </InputLeftElement>
           <Input
+            name="name"
             id="name"
             placeholder="user"
             type="text"
             focusBorderColor="primaryBlue"
+            value={formValues.name}
+            onChange={handleChange}
           />
         </InputGroup>
         <HStack mb={2}>
@@ -66,23 +138,32 @@ const RegisterPage = () => {
             <FaEnvelope />
           </InputLeftElement>
           <Input
+            name="email"
             id="email"
             placeholder="username@example.com"
             type="email"
             focusBorderColor="primaryBlue"
+            value={formValues.email}
+            onChange={handleChange}
           />
         </InputGroup>{" "}
         <HStack mb={2}>
           <label htmlFor="email">Role</label>
         </HStack>
         <Select
+          name="role"
           placeholder="Select role"
           size="lg"
           mb={4}
           focusBorderColor="primaryBlue"
+          onChange={handleChange}
         >
-          <option value="STUDENT">Student</option>
-          <option value="HANDLER">Handler</option>
+          <option value="STUDENT" selected={formValues.role === "STUDENT"}>
+            Student
+          </option>
+          <option value="HANDLER" selected={formValues.role === "HANDLER"}>
+            Handler
+          </option>
         </Select>
         <HStack mb={2}>
           <label htmlFor="password">Password</label>
@@ -96,10 +177,13 @@ const RegisterPage = () => {
             <FaLock />
           </InputLeftElement>
           <Input
+            name="password"
             id="password"
             placeholder="Password"
             type="password"
             focusBorderColor="primaryBlue"
+            value={formValues.password}
+            onChange={handleChange}
           />
         </InputGroup>
         <HStack mb={2}>
@@ -114,14 +198,17 @@ const RegisterPage = () => {
             <FaLock />
           </InputLeftElement>
           <Input
+            name="retypePassword"
             id="retypePassword"
             placeholder="Retype Password"
             type="password"
             focusBorderColor="primaryBlue"
+            value={formValues.retypePassword}
+            onChange={handleChange}
           />
         </InputGroup>
         <Button
-          rightIcon={<FaArrowRightFromBracket />}
+          rightIcon={<FaArrowRightToBracket />}
           color={"white"}
           backgroundColor="primaryBlue"
           _hover={{ bg: "darkBlue" }}

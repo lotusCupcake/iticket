@@ -20,10 +20,15 @@ import {
   FaUsers,
 } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
+import { userApi } from "../../api/userApi";
 const Sidebar = ({ navSize, changeNavSize }) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const onHandleSignOut = () => {
+    userApi.signOut();
+    navigate("/login");
+  };
 
   return (
     <Flex
@@ -118,7 +123,7 @@ const Sidebar = ({ navSize, changeNavSize }) => {
                 w={navSize == "large" && "100%"}
                 onMouseEnter={() => navSize == "small" && setIsHovered(true)}
                 onMouseLeave={() => navSize == "small" && setIsHovered(false)}
-                onClick={() => navigate("/login")}
+                onClick={onHandleSignOut}
               >
                 <MenuButton w="100%">
                   <Flex color={"coldBlue"}>
