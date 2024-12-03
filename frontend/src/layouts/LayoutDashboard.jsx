@@ -3,6 +3,7 @@ import { Header, Sidebar, Footer } from "./components";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import useUserStore from "../store/userStore";
+import { ROLES } from "../constant/roles";
 
 const LayoutDashboard = ({ children }) => {
   const [navSize, setNavSize] = useState("large");
@@ -16,13 +17,13 @@ const LayoutDashboard = ({ children }) => {
 
   return (
     <Flex direction="column" minHeight="100vh" backgroundColor={"coldBlue"}>
-      {user?.role === "ADMIN" && (
+      {user?.role === ROLES.ADMIN && (
         <Sidebar navSize={navSize} changeNavSize={setNavSize} />
       )}
       <Header user={user} />
       <Box
         ml={
-          user?.role === "ADMIN"
+          user?.role === ROLES.ADMIN
             ? navSize === "small"
               ? "75px"
               : "220px"

@@ -6,6 +6,7 @@ import AssignIssuesPage from "./AssignIssuesPage";
 import HandlingIssuesPage from "./HandlingIssuesPage";
 import MyTicketsPage from "./MyTicketsPage";
 import AccountsPage from "./AccountsPage";
+import UnauthorizedPage from "./UnauthorizedPage";
 
 export {
   LoginPage,
@@ -16,4 +17,5 @@ export {
   HandlingIssuesPage,
   MyTicketsPage,
   AccountsPage,
+  UnauthorizedPage,
 };

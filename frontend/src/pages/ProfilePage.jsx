@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Box,
   Button,
   Card,
   CardBody,
@@ -9,7 +8,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Icon,
   Input,
   Text,
   useToast,

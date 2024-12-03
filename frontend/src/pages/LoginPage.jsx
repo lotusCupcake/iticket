@@ -16,8 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowRightToBracket, FaEnvelope, FaLock } from "react-icons/fa6";
 import { useState } from "react";
 import { userApi } from "../api/userApi";
+import useUserStore from "../store/userStore";
 
 const LoginPage = () => {
+  const fetchProfile = useUserStore((state) => state.fetchProfile);
   const navigate = useNavigate();
   const [formValues, setFormValues] = useState({
     email: "",
@@ -30,21 +32,28 @@ const LoginPage = () => {
     e.preventDefault();
     const { email, password } = formValues;
 
-    try {
-      const dataUser = await userApi.login(email, password);
+    if (!email || !password) {
+      toast({
+        title: "Please fill all the form fields",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      return;
+    }
 
-      if (dataUser.data.user.role === "ADMIN") {
-        navigate("/assign-issues");
-      } else if (dataUser.data.user.role === "HANDLER") {
-        navigate("/handling-issues");
-      } else {
-        navigate("/my-tickets");
-      }
+    try {
+      await userApi.login(email, password);
+
+      fetchProfile();
+
+      navigate("/");
 
       setFormValues({ email: "", password: "" });
 
       toast({
-        title: "Login Berhasil.",
+        title: "Success login",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -52,7 +61,7 @@ const LoginPage = () => {
       });
     } catch (error) {
       toast({
-        title: "Username atau Password salah",
+        title: "Oops, something went wrong! " + error.response.data.message,
         status: "error",
         duration: 3000,
         isClosable: true,
