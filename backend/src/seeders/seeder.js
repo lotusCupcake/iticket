@@ -99,12 +99,10 @@ const seedDatabase = async () => {
     console.log("Previous data cleared");
 
     // Create users
-    const createdUsers = await User.create(users);
-    console.log("Users seeded:", createdUsers);
+    await User.create(users);
 
     // Create categories
-    const createdCategories = await Category.insertMany(categories);
-    console.log("Categories seeded:", createdCategories);
+    await Category.insertMany(categories);
 
     // Create tickets for each user and each category
     for (const user of createdUsers) {

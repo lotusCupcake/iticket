@@ -1,8 +1,14 @@
-import { Avatar, Box } from "@chakra-ui/react";
+import { Avatar, Box, Icon, Tooltip } from "@chakra-ui/react";
+import { CgLogOut } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
+import { userApi } from "../../api/userApi";
 
-const Header = () => {
+const Header = ({ user }) => {
   const navigate = useNavigate();
+  const onHandleSignOut = () => {
+    userApi.signOut();
+    navigate("/login");
+  };
   return (
     <Box
       w="full"
@@ -12,16 +18,25 @@ const Header = () => {
       zIndex="1000"
       display="flex"
       alignItems="center"
-      justifyContent="right"
+      justifyContent="space-between"
       px={4}
       boxShadow="md"
     >
-      <Avatar
-        cursor="pointer"
-        size="md"
-        src="https://bit.ly/broken-link"
-        onClick={() => navigate("/profile")}
-      />
+      <Tooltip label="Logout" hasArrow placement="right">
+        <Box cursor="pointer" onClick={onHandleSignOut}>
+          <Icon as={CgLogOut} boxSize={14} color="primaryBlue" />
+        </Box>
+      </Tooltip>
+      <Tooltip label="Profile" hasArrow placement="left">
+        <Avatar
+          name={user?.name}
+          cursor="pointer"
+          size="md"
+          shadow={"md"}
+          src={user?.photo}
+          onClick={() => navigate("/profile")}
+        />
+      </Tooltip>
     </Box>
   );
 };
