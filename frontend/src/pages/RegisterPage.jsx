@@ -40,9 +40,20 @@ const RegisterPage = () => {
 
     const { name, email, role, password, retypePassword } = formValues;
 
+    if ((!name || !email || !role || !password, !retypePassword)) {
+      toast({
+        title: "Please fill all the form fields",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      return;
+    }
+
     if (password !== retypePassword) {
       toast({
-        title: "Password Tidak Sama.",
+        title: "Password and Retype Password doesn't match",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -51,7 +62,6 @@ const RegisterPage = () => {
       return;
     }
 
-    console.log(name, email, role, password, retypePassword);
     try {
       await userApi.register(name, email, role, password);
 
@@ -66,7 +76,7 @@ const RegisterPage = () => {
       });
 
       toast({
-        title: "Register Berhasil, Harap Tunggu Sampai Admin Menyetujui.",
+        title: "Success Register, wait for admin approval",
         status: "success",
         duration: 3000,
         isClosable: true,

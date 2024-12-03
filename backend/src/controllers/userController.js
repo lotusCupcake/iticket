@@ -26,8 +26,13 @@ const userController = {
       const { email, password } = req.body;
 
       const user = await User.findOne({ email });
+
       if (!user) {
         return ResponseAPI.error(res, "Invalid email or password", 401);
+      }
+
+      if (!user.isActive) {
+        return ResponseAPI.error(res, "User is not active", 401);
       }
 
       const isPasswordValid = await user.comparePassword(password);

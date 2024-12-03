@@ -83,7 +83,9 @@ const Sidebar = ({ navSize, changeNavSize }) => {
           navSize={navSize}
           icon={FaListCheck}
           title="Assign Issues"
-          active={location.pathname === "/assign-issues"}
+          active={
+            location.pathname === "/assign-issues" || location.pathname === "/"
+          }
           handlingNavigate={() => navigate("/assign-issues")}
         />
         <MenuItem
