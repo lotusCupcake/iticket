@@ -7,6 +7,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const env = require("../config/env");
+const { imageUpload } = require("../utils/imageUtil");
 
 const generateToken = (user) => {
   const jwtPayload = {
@@ -34,6 +35,14 @@ const userController = {
         return ResponseAPI.error(res, "Invalid email or password", 401);
       }
 
+      if (!user.isActive) {
+        return ResponseAPI.error(
+          res,
+          "Please wait for admin to activate your account!",
+          401
+        );
+      }
+
       const token = generateToken(user);
 
       ResponseAPI.success(res, {
@@ -43,7 +52,7 @@ const userController = {
           name: user.name,
           email: user.email,
           photo: user.photo,
-          type: user.type,
+          role: user.role,
         },
       });
     } catch (error) {
@@ -53,8 +62,21 @@ const userController = {
 
   async getProfile(req, res, next) {
     try {
-      const user = await User.findById(req.user._id).select("-password");
+      const user = await User.findById(req.user._id).select(
+        "-password -password_salt"
+      );
       ResponseAPI.success(res, user);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getAccount(req, res, next) {
+    try {
+      const users = await User.find({
+        role: { $in: ["STUDENT", "HANDLER"] },
+      }).select("-password -password_salt");
+      ResponseAPI.success(res, users);
     } catch (error) {
       next(error);
     }
@@ -64,27 +86,14 @@ const userController = {
     try {
       const { name, email, password } = req.body;
 
-      const user = await User.findById(req.user._id).select("-password");
+      const user = await User.findById(req.user._id).select(
+        "-password -password_salt"
+      );
 
       if (req.file) {
-        const formData = new FormData();
-        const imageFile = fs.createReadStream(req.file.path);
-        formData.append("image", imageFile);
+        const urlUploadResult = await imageUpload(req.file, user.photo);
 
-        const url = `${env.imgbbBaseUrl}?key=${env.imgbbSecretKey}`;
-
-        const response = await axios.post(url, formData, {
-          headers: {
-            ...formData.getHeaders(),
-          },
-        });
-        if (response.data.success) {
-          user.photo = response.data.data.url.replace(
-            "i.ibb.co/",
-            "i.ibb.co.com/"
-          );
-          fs.unlinkSync(req.file.path);
-        }
+        user.photo = urlUploadResult;
       }
 
       if (password) {
@@ -118,10 +127,14 @@ const userController = {
         password: req.body.password,
         password_salt: salt,
         email: req.body.email,
-        type: req.body.type,
+        role: req.body.role,
       });
 
-      ResponseAPI.success(res, user);
+      const userResponse = await User.findById(user._id).select(
+        "-password -password_salt"
+      );
+
+      ResponseAPI.success(res, userResponse);
     } catch (error) {
       next(error);
     }

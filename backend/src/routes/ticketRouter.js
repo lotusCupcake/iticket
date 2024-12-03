@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const categoryController = require("../controllers/categoryController");
+const ticketController = require("../controllers/ticketController");
 const authentication = require("../middleware/authentication");
 const upload = require("../utils/multer");
 const authorizeRoles = require("../middleware/authorization");
@@ -9,29 +9,31 @@ const ROLES = require("../constant/roles");
 router.post(
   "/",
   authentication,
-  authorizeRoles([ROLES.ADMIN]),
-  categoryController.createCategory
+  authorizeRoles([ROLES.STUDENT]),
+  ticketController.createTicket
 );
 
+router.get("/", authentication, ticketController.getUserTickets);
+
 router.get(
-  "/",
+  "/all",
   authentication,
-  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER, ROLES.STUDENT]),
-  categoryController.getCategories
+  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER]),
+  ticketController.getAllTickets
 );
 
 router.put(
   "/:id",
   authentication,
   authorizeRoles([ROLES.ADMIN]),
-  categoryController.updateCategory
+  ticketController.updateTicketStatus
 );
 
 router.delete(
   "/:id",
   authentication,
   authorizeRoles([ROLES.ADMIN]),
-  categoryController.deleteCategory
+  ticketController.deleteTicket
 );
 
 module.exports = router;

@@ -14,13 +14,19 @@ router.get(
   authorizeRoles([ROLES.ADMIN, ROLES.HANDLER, ROLES.STUDENT]),
   userController.getProfile
 );
+router.get(
+  "/account",
+  authentication,
+  authorizeRoles([ROLES.ADMIN]),
+  userController.getAccount
+);
 router.put(
   "/profile",
   authentication,
   upload.single("photo"),
   userController.updateProfile
 );
-router.put(
+router.patch(
   "/activate-user/:id",
   authentication,
   authorizeRoles([ROLES.ADMIN]),
