@@ -119,13 +119,14 @@ const router = createBrowserRouter([
 
 function App() {
   const fetchProfile = useUserStore((state) => state.fetchProfile);
+  const token = localStorage.getItem("token");
   const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    if (!user) {
+    if (token && !user) {
       fetchProfile();
     }
-  }, [user, fetchProfile]);
+  }, [token, user, fetchProfile]);
 
   return <RouterProvider router={router} />;
 }
