@@ -99,10 +99,10 @@ const seedDatabase = async () => {
     console.log("Previous data cleared");
 
     // Create users
-    await User.create(users);
+    const createdUsers = await User.create(users);
 
     // Create categories
-    await Category.insertMany(categories);
+    const createdCategories = await Category.insertMany(categories);
 
     // Create tickets for each user and each category
     for (const user of createdUsers) {
@@ -114,12 +114,12 @@ const seedDatabase = async () => {
 
     // Successfully seeded
     console.log("Database seeded successfully!");
-
-    // Exit the process
-    process.exit(0);
   } catch (error) {
     console.error("Error seeding database:", error);
-    process.exit(1);
+  } finally {
+    // Ensure that the connection is closed
+    await mongoose.connection.close();
+    process.exit(0);
   }
 };
 
