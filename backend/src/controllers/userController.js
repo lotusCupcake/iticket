@@ -40,6 +40,14 @@ const userController = {
         return ResponseAPI.error(res, "Invalid email or password", 401);
       }
 
+      if (!user.isActive) {
+        return ResponseAPI.error(
+          res,
+          "Please wait for admin to activate your account!",
+          401
+        );
+      }
+
       const token = generateToken(user);
 
       ResponseAPI.success(res, {
@@ -63,6 +71,17 @@ const userController = {
         "-password -password_salt"
       );
       ResponseAPI.success(res, user);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getAccount(req, res, next) {
+    try {
+      const users = await User.find({
+        role: { $in: ["STUDENT", "HANDLER"] },
+      }).select("-password -password_salt");
+      ResponseAPI.success(res, users);
     } catch (error) {
       next(error);
     }
