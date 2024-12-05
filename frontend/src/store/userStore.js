@@ -12,6 +12,17 @@ const useUserStore = create((set) => ({
       console.error("Failed to get profile:", error);
     }
   },
+
+  accounts: [],
+
+  fetchAccounts: async () => {
+    try {
+      const accounts = await userApi.getAccounts();
+      set({ accounts });
+    } catch (error) {
+      console.error("Failed to get accounts:", error);
+    }
+  },
 }));
 
 export default useUserStore;
