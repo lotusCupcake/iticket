@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const User = require("../models/User");
 const Category = require("../models/Category");
 const Ticket = require("../models/Ticket");
+const History = require("../models/History");
+const Assignment = require("../models/Assignment");
 const { mongodbUri } = require("../config/env");
 const ROLES = require("../constant/roles");
 
@@ -29,8 +31,22 @@ const users = [
     isActive: true,
   },
   {
+    name: "Rifki Ardiansah",
+    email: "rifki@example.com",
+    password: "password123",
+    role: ROLES.HANDLER,
+    isActive: true,
+  },
+  {
     name: "Jane Doe",
     email: "jane@example.com",
+    password: "password123",
+    role: ROLES.STUDENT,
+    isActive: true,
+  },
+  {
+    name: "Dono Sudono",
+    email: "dono@example.com",
     password: "password123",
     role: ROLES.STUDENT,
     isActive: true,
@@ -84,7 +100,28 @@ const createTickets = async (userId, categoryId) => {
       status: "OPEN",
     },
   ];
-  await Ticket.insertMany(tickets);
+
+  const createdTickets = await Ticket.create(tickets);
+
+  const histories = createdTickets.map((ticket) => ({
+    ticketId: ticket._id,
+    status: ticket.status,
+    description: ticket.description,
+  }));
+
+  await History.create(histories);
+
+  return createdTickets;
+};
+
+const createAssignments = async (userId, tickets) => {
+  const assignments = tickets.map((ticket) => ({
+    userId,
+    ticketId: ticket._id,
+    resolution: "Harap Segera Menemui Admin di kampus",
+  }));
+
+  await Assignment.create(assignments);
 };
 
 const seedDatabase = async () => {
@@ -95,29 +132,27 @@ const seedDatabase = async () => {
     await User.deleteMany();
     await Category.deleteMany();
     await Ticket.deleteMany();
+    await History.deleteMany();
+    await Assignment.deleteMany();
 
     console.log("Previous data cleared");
 
-    // Create users
     const createdUsers = await User.create(users);
 
-    // Create categories
-    const createdCategories = await Category.insertMany(categories);
+    const createdCategories = await Category.create(categories);
 
-    // Create tickets for each user and each category
     for (const user of createdUsers) {
       for (const category of createdCategories) {
-        await createTickets(user._id, category._id);
+        const createdTickets = await createTickets(user._id, category._id);
+        await createAssignments(user._id, createdTickets);
       }
     }
-    console.log("Tickets seeded");
+    // console.log("Tickets, histories, and assignments seeded");
 
-    // Successfully seeded
     console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
-    // Ensure that the connection is closed
     await mongoose.connection.close();
     process.exit(0);
   }

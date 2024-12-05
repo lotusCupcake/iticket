@@ -32,7 +32,7 @@ router.put(
 router.delete(
   "/:id",
   authentication,
-  authorizeRoles([ROLES.ADMIN]),
+  authorizeRoles([ROLES.STUDENT]),
   ticketController.deleteTicket
 );
 
