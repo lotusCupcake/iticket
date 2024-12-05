@@ -97,7 +97,7 @@ const AccountsPage = () => {
           }
         >
           <option value="active">Active</option>
-          <option value="inactive">Non Active</option>
+          <option value="inactive">Inactive</option>
         </Select>
       ),
     }),
@@ -121,12 +121,12 @@ const AccountsPage = () => {
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Konfirmasi</ModalHeader>
+          <ModalHeader>Confirmation</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            Apakah Anda yakin ingin mengubah status pengguna{" "}
-            <b>{selectedUser?.name}</b> menjadi{" "}
-            <b>{newStatus === "active" ? "Active" : "Non Active"}</b>?
+            Are you sure you want to change the status of user{" "}
+            <b>{selectedUser?.name}</b> to{" "}
+            <b>{newStatus === "active" ? "Active" : "Inactive"}</b>?
           </ModalBody>
           <ModalFooter>
             <Button
@@ -134,7 +134,7 @@ const AccountsPage = () => {
               mr={3}
               onClick={() => setIsModalOpen(false)}
             >
-              Batal
+              CLose
             </Button>
             <Button
               color={"white"}
@@ -142,7 +142,7 @@ const AccountsPage = () => {
               _hover={{ bg: "darkBlue" }}
               onClick={handleConfirmChange}
             >
-              Konfirmasi
+              Yes
             </Button>
           </ModalFooter>
         </ModalContent>
