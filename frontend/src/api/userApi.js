@@ -54,10 +54,35 @@ const signOut = async () => {
   localStorage.removeItem("token");
 };
 
+const getAccounts = async () => {
+  try {
+    const { data } = await axiosInstance.get("/users/account");
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const updateStatusAccount = async (name, email, role, password) => {
+  try {
+    const { data } = await axiosInstance.post("/users/activateUser", {
+      name,
+      email,
+      role,
+      password,
+    });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const userApi = {
   login,
   getProfile,
   signOut,
   updateProfile,
   register,
+  getAccounts,
+  updateStatusAccount,
 };
