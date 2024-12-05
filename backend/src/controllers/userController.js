@@ -82,6 +82,16 @@ const userController = {
       next(error);
     }
   },
+  async getHandler(req, res, next) {
+    try {
+      const users = await User.find({
+        role: { $in: ["HANDLER"] },
+      }).select("-password -password_salt");
+      ResponseAPI.success(res, users);
+    } catch (error) {
+      next(error);
+    }
+  },
 
   async updateProfile(req, res, next) {
     try {

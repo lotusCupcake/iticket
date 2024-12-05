@@ -1,12 +1,22 @@
 const Ticket = require("../models/Ticket");
+const History = require("../models/History");
 const ResponseAPI = require("../utils/response");
 
 const ticketController = {
   async createTicket(req, res, next) {
     try {
+      // Membuat tiket baru
       const ticket = await Ticket.create({
         ...req.body,
         userId: req.user._id,
+      });
+
+      // Menyimpan riwayat pembuatan tiket
+      await History.create({
+        userId: req.user._id,
+        ticketId: ticket._id,
+        status: ticket.status,
+        description: ticket.description,
       });
 
       return ResponseAPI.success(
@@ -25,7 +35,7 @@ const ticketController = {
     try {
       const tickets = await Ticket.find({ userId: req.user._id })
         .populate("userId", "name")
-        .populate("categoryId", "name description");
+        .populate("categoryId", "name");
 
       return ResponseAPI.success(res, tickets);
     } catch (error) {
@@ -38,7 +48,7 @@ const ticketController = {
     try {
       const tickets = await Ticket.find()
         .populate("userId", "name")
-        .populate("categoryId", "name description");
+        .populate("categoryId", "name");
 
       return ResponseAPI.success(res, tickets);
     } catch (error) {
