@@ -1,24 +1,71 @@
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
   Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Select,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useUserStore from "../store/userStore";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
+import { userApi } from "../api/userApi";
 
 const AccountsPage = () => {
   const accounts = useUserStore((state) => state.accounts);
   const fetchAccounts = useUserStore((state) => state.fetchAccounts);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
+
+  const toast = useToast();
+
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  const handleSelectChange = (user, status) => {
+    setSelectedUser(user);
+    setNewStatus(status);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmChange = async () => {
+    try {
+      const response = await userApi.changeStatus(selectedUser?._id);
+
+      toast({
+        title: response.message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+
+      fetchAccounts();
+    } catch (error) {
+      toast({
+        title: "Oops, something went wrong! " + error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+    setIsModalOpen(false);
+  };
 
   const columnHelper = createColumnHelper();
 
@@ -45,6 +92,9 @@ const AccountsPage = () => {
         <Select
           focusBorderColor="primaryBlue"
           defaultValue={info.getValue() ? "active" : "inactive"}
+          onChange={(e) =>
+            handleSelectChange(info.row.original, e.target.value)
+          }
         >
           <option value="active">Active</option>
           <option value="inactive">Non Active</option>
@@ -67,6 +117,36 @@ const AccountsPage = () => {
           </Flex>
         </CardBody>
       </Card>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Konfirmasi</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Apakah Anda yakin ingin mengubah status pengguna{" "}
+            <b>{selectedUser?.name}</b> menjadi{" "}
+            <b>{newStatus === "active" ? "Active" : "Non Active"}</b>?
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="gray"
+              mr={3}
+              onClick={() => setIsModalOpen(false)}
+            >
+              Batal
+            </Button>
+            <Button
+              color={"white"}
+              backgroundColor="primaryBlue"
+              _hover={{ bg: "darkBlue" }}
+              onClick={handleConfirmChange}
+            >
+              Konfirmasi
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </LayoutDashboard>
   );
 };

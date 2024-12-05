@@ -9,7 +9,7 @@ const useUserStore = create((set) => ({
       const user = await userApi.getProfile();
       set({ user });
     } catch (error) {
-      console.error("Failed to get profile:", error);
+      throw new Error("Failed to get profile:", error);
     }
   },
 
@@ -20,7 +20,16 @@ const useUserStore = create((set) => ({
       const accounts = await userApi.getAccounts();
       set({ accounts });
     } catch (error) {
-      console.error("Failed to get accounts:", error);
+      throw new Error("Failed to get accounts:", error);
+    }
+  },
+
+  changeStatus: async (id) => {
+    try {
+      const response = await userApi.changeStatus(id);
+      return response;
+    } catch (error) {
+      throw new Error("Failed to change status:", error);
     }
   },
 }));
