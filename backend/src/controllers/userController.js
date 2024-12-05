@@ -8,6 +8,7 @@ const FormData = require("form-data");
 const fs = require("fs");
 const env = require("../config/env");
 const { imageUpload } = require("../utils/imageUtil");
+const ROLES = require("../constant/roles");
 
 const generateToken = (user) => {
   const jwtPayload = {
@@ -150,19 +151,33 @@ const userController = {
       next(error);
     }
   },
-  async activateUser(req, res, next) {
+  async changeStatus(req, res, next) {
     try {
-      const { id } = req.params;
+      const id = req.body.id;
+
       const user = await User.findById(id);
 
       if (!user) {
-        return ResponseAPI.error(res, "User  not found", 404);
+        return ResponseAPI.error(res, "User not found", 404);
       }
 
-      user.isActive = true;
+      if (user.role === ROLES.ADMIN) {
+        return ResponseAPI.error(
+          res,
+          "You can't activate or deactivate an admin",
+          403
+        );
+      }
+
+      const userIsActive = user.isActive;
+      user.isActive = !userIsActive;
       await user.save();
 
-      return ResponseAPI.success(res, user, "User  activated successfully");
+      return ResponseAPI.success(
+        res,
+        user,
+        `User ${userIsActive ? "de" : ""}activated successfully`
+      );
     } catch (error) {
       console.error("Error activate User:", error);
       return next(error);
