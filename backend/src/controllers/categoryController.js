@@ -2,11 +2,13 @@ const Category = require("../models/Category");
 const ResponseAPI = require("../utils/response");
 
 const categoryController = {
-  // Function to create a new category
   async createCategory(req, res, next) {
     try {
       if (!req.body.name) {
         return ResponseAPI.error(res, "Category name is required", 400);
+      }
+      if (!req.body.description) {
+        return ResponseAPI.error(res, "Category description is required", 400);
       }
 
       const category = await Category.create(req.body);
@@ -22,8 +24,7 @@ const categoryController = {
     }
   },
 
-  // Function to get all categories
-  async getCategories(req, res, next) {
+  async getCategories(res, next) {
     try {
       const categories = await Category.find();
       return ResponseAPI.success(
@@ -33,17 +34,16 @@ const categoryController = {
       );
     } catch (error) {
       console.error("Error retrieving categories:", error);
-      return ResponseAPI.error(res, error.message);
+      return next(error);
     }
   },
 
-  // Function to update a category
   async updateCategory(req, res, next) {
     try {
       const { id } = req.params;
 
       if (!id) {
-        return ResponseAPI.error(res, "ID not provided!", 400);
+        return ResponseAPI.error(res, "ID not provided", 400);
       }
 
       const category = await Category.findById(id);
@@ -72,13 +72,13 @@ const categoryController = {
       return next(error);
     }
   },
-  // Function to delete a category
+
   async deleteCategory(req, res, next) {
     try {
       const { id } = req.params;
 
       if (!id) {
-        return ResponseAPI.error(res, "ID not provided!", 400);
+        return ResponseAPI.error(res, "ID not provided", 400);
       }
 
       const category = await Category.findByIdAndDelete(id);
@@ -95,7 +95,6 @@ const categoryController = {
   },
 };
 
-// Function to validate ObjectId
 const isValidObjectId = (id) => {
   return /^[0-9a-fA-F]{24}$/.test(id);
 };
