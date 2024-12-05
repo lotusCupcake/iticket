@@ -4,15 +4,7 @@ import {
   CardHeader,
   Flex,
   Select,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
-  useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
 import { useEffect } from "react";
