@@ -103,7 +103,7 @@ const CategoriesPage = () => {
   const handleDelete = async () => {
     try {
       const response = await categoriesApi.deleteCategory(
-        deleteCategoryData.id
+        deleteCategoryData._id
       );
       toast({
         title: response.message,
