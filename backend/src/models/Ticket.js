@@ -23,7 +23,7 @@ const ticketSchema = new mongoose.Schema(
     },
     attachment: {
       type: String,
-      default: null,
+      default: "",
     },
     status: {
       type: String,

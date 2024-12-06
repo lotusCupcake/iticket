@@ -147,7 +147,6 @@ const seedDatabase = async () => {
         await createAssignments(user._id, createdTickets);
       }
     }
-    // console.log("Tickets, histories, and assignments seeded");
 
     console.log("Database seeded successfully!");
   } catch (error) {

@@ -13,10 +13,9 @@ const assignmentSchema = new mongoose.Schema(
       required: [true, "Ticket ID is required"],
     },
     status: {
-      type: String,
-      enum: ["OPEN", "IN_PROGRESS", "RESOLVED", "UNRESOLVED"],
-      default: "OPEN",
-      required: true,
+      type: mongoose.Schema.Types.String,
+      ref: "Ticket",
+      required: [true, "Status is required"],
     },
     resolution: {
       type: String,

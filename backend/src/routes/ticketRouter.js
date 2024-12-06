@@ -10,17 +10,19 @@ router.post(
   "/",
   authentication,
   authorizeRoles([ROLES.STUDENT]),
+  upload.single("attachment"),
   ticketController.createTicket
 );
 
-router.get("/", authentication, ticketController.getUserTickets);
+router.get("/user", authentication, ticketController.getUserTickets);
 
 router.get(
-  "/all",
+  "/",
   authentication,
   authorizeRoles([ROLES.ADMIN, ROLES.HANDLER]),
   ticketController.getAllTickets
 );
+router.get("/handler", authentication, ticketController.getTicketsHandler);
 
 router.put(
   "/:id",
