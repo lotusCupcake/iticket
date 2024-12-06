@@ -1,22 +1,29 @@
 const Ticket = require("../models/Ticket");
 const History = require("../models/History");
+const Assignment = require("../models/Assignment");
 const ResponseAPI = require("../utils/response");
+const fs = require("fs");
+const env = require("../config/env");
+const FormData = require("form-data");
+const { imageUpload } = require("../utils/imageUtil");
 
 const ticketController = {
   async createTicket(req, res, next) {
     try {
-      // Membuat tiket baru
       const ticket = await Ticket.create({
         ...req.body,
         userId: req.user._id,
       });
-
-      // Menyimpan riwayat pembuatan tiket
+      if (req.file) {
+        const urlUploadResult = await imageUpload(req.file, ticket.attachment);
+        ticket.attachment = urlUploadResult;
+        await ticket.save();
+      }
       await History.create({
         userId: req.user._id,
         ticketId: ticket._id,
         status: ticket.status,
-        description: ticket.description,
+        description: "Ticket Created",
       });
 
       return ResponseAPI.success(
@@ -26,6 +33,9 @@ const ticketController = {
         201
       );
     } catch (error) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
       console.error("Error creating ticket:", error);
       return next(error);
     }
@@ -44,9 +54,29 @@ const ticketController = {
     }
   },
 
+  async getTicketsHandler(req, res, next) {
+    try {
+      const { ticketId } = req.body;
+      const tickets = await Assignment.find({ ticketId }).populate(
+        "userId",
+        "name"
+      );
+
+      return ResponseAPI.success(res, tickets);
+    } catch (error) {
+      console.error("Error fetching user tickets:", error);
+      return next(error);
+    }
+  },
+
   async getAllTickets(req, res, next) {
     try {
-      const tickets = await Ticket.find()
+      const filter = {};
+
+      if (req.query.status) {
+        filter.status = req.query.status;
+      }
+      const tickets = await Ticket.find(filter)
         .populate("userId", "name")
         .populate("categoryId", "name");
 

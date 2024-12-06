@@ -24,7 +24,8 @@ const categoryController = {
     }
   },
 
-  async getCategories(res, next) {
+  // Function to get all categories
+  async getCategories(req, res, next) {
     try {
       const categories = await Category.find();
       return ResponseAPI.success(
@@ -38,6 +39,7 @@ const categoryController = {
     }
   },
 
+  // Function to update a category
   async updateCategory(req, res, next) {
     try {
       const { id } = req.params;
@@ -72,7 +74,7 @@ const categoryController = {
       return next(error);
     }
   },
-
+  // Function to delete a category
   async deleteCategory(req, res, next) {
     try {
       const { id } = req.params;
@@ -95,6 +97,7 @@ const categoryController = {
   },
 };
 
+// Function to validate ObjectId
 const isValidObjectId = (id) => {
   return /^[0-9a-fA-F]{24}$/.test(id);
 };
