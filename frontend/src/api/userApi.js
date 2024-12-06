@@ -54,10 +54,32 @@ const signOut = async () => {
   localStorage.removeItem("token");
 };
 
+const getAccounts = async () => {
+  try {
+    const { data } = await axiosInstance.get("/users/accounts");
+    return data.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const changeStatus = async (id) => {
+  try {
+    const { data } = await axiosInstance.patch("/users/change-status", {
+      id,
+    });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const userApi = {
   login,
   getProfile,
   signOut,
   updateProfile,
   register,
+  getAccounts,
+  changeStatus,
 };

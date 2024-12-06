@@ -15,7 +15,7 @@ router.get(
   userController.getProfile
 );
 router.get(
-  "/account",
+  "/accounts",
   authentication,
   authorizeRoles([ROLES.ADMIN]),
   userController.getAccount
@@ -33,10 +33,10 @@ router.put(
   userController.updateProfile
 );
 router.patch(
-  "/activate-user/:id",
+  "/change-status",
   authentication,
   authorizeRoles([ROLES.ADMIN]),
-  userController.activateUser
+  userController.changeStatus
 );
 
 module.exports = router;

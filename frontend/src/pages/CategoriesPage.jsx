@@ -15,31 +15,157 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
   Textarea,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaPen, FaPlus, FaTrash } from "react-icons/fa6";
+import { categoriesApi } from "../api/categoriesApi";
+import useCategoriesStore from "../store/categoriesStore";
+import { createColumnHelper } from "@tanstack/react-table";
+import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
 
 const CategoriesPage = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const categories = useCategoriesStore((state) => state.categories);
+  const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
 
-  const [deleteCategory, setDeleteCategory] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isEdit, setIsEdit] = useState(false);
+  const [formData, setFormData] = useState({ name: "", description: "" });
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
+  const [deleteCategoryData, setDeleteCategoryData] = useState(null);
   const deleteDisclosure = useDisclosure();
 
-  const openDeleteModal = (category) => {
-    setDeleteCategory(category);
-    deleteDisclosure.onOpen();
+  const toast = useToast();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const openAddModal = () => {
+    setIsEdit(false);
+    setFormData({ name: "", description: "" });
+    onOpen();
   };
+
+  const openEditModal = (category) => {
+    setIsEdit(true);
+    setFormData(category);
+    setSelectedCategoryId(category._id);
+    onOpen();
+  };
+
+  const handleSave = async () => {
+    try {
+      if (isEdit) {
+        const response = await categoriesApi.updateCategory(
+          selectedCategoryId,
+          formData.name,
+          formData.description
+        );
+        toast({
+          title: response.message,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      } else {
+        const response = await categoriesApi.addCategory(
+          formData.name,
+          formData.description
+        );
+        toast({
+          title: response.message,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      }
+      fetchCategories();
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Oops, something went wrong! " + error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await categoriesApi.deleteCategory(
+        deleteCategoryData.id
+      );
+      toast({
+        title: response.message,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+      fetchCategories();
+      deleteDisclosure.onClose();
+    } catch (error) {
+      toast({
+        title: "Oops, something went wrong! " + error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
+  };
+
+  const columnHelper = createColumnHelper();
+
+  const columns = [
+    columnHelper.accessor((_, index) => index + 1, {
+      header: "No",
+      cell: (info) => info.row.index + 1,
+    }),
+    columnHelper.accessor("name", {
+      header: "Name",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("description", {
+      header: "Description",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("actions", {
+      header: "Actions",
+      cell: (info) => (
+        <>
+          <Button
+            size="sm"
+            colorScheme="yellow"
+            mr={2}
+            onClick={() => openEditModal(info.row.original)}
+          >
+            <Icon as={FaPen} />
+          </Button>
+          <Button
+            size="sm"
+            colorScheme="red"
+            onClick={() => {
+              setDeleteCategoryData(info.row.original);
+              deleteDisclosure.onOpen();
+            }}
+          >
+            <Icon as={FaTrash} />
+          </Button>
+        </>
+      ),
+    }),
+  ];
 
   return (
     <LayoutDashboard>
@@ -47,121 +173,95 @@ const CategoriesPage = () => {
         <CardHeader>
           <Flex justify="space-between" align="center">
             <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-              Categories Managements
+              Categories Management
             </Text>
             <Button
               leftIcon={<FaPlus />}
               color={"white"}
               backgroundColor="primaryBlue"
               _hover={{ bg: "darkBlue" }}
-              onClick={onOpen}
+              onClick={openAddModal}
             >
               Add Category
             </Button>
           </Flex>
         </CardHeader>
         <CardBody>
-          <Text>
-            <TableContainer>
-              <Table variant="simple">
-                <Thead>
-                  <Tr backgroundColor={"primaryBlue"}>
-                    <Th textAlign="center" color={"white"}>
-                      No
-                    </Th>
-                    <Th color={"white"}>Name</Th>
-                    <Th color={"white"}>Description</Th>
-                    <Th textAlign="center" color={"white"}>
-                      Actions
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {[...Array(10).keys()].map((i) => (
-                    <Tr key={i}>
-                      <Td textAlign="center">{i + 1}</Td>
-                      <Td>Lorem ipsum dolor sit amet {i + 1}.</Td>
-                      <Td>
-                        Lorem ipsum dolor, sit amet consectetur adipisicing
-                        elit. Perspiciatis facere hic laboriosam, obcaecati quam
-                        pariatur?
-                      </Td>
-                      <Td textAlign={"center"}>
-                        <Button size="md" colorScheme="gray" mr={2}>
-                          <Icon as={FaPen} />
-                        </Button>
-                        <Button size="md" colorScheme="red">
-                          <Icon
-                            as={FaTrash}
-                            onClick={() =>
-                              openDeleteModal(
-                                `Lorem ipsum dolor sit amet ${i + 1}.`
-                              )
-                            }
-                          />
-                        </Button>
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </Text>
+          <DataTable columns={columns} data={categories} />
         </CardBody>
-        <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader color={"primaryBlue"}>Add Category</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl isRequired>
-                <FormLabel>Name</FormLabel>
-                <Input focusBorderColor="lightBlue" />
-              </FormControl>
-              <FormControl isRequired mt={4}>
-                <FormLabel>Description</FormLabel>
-                <Textarea focusBorderColor="lightBlue" />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="gray" mr={3} onClick={onClose}>
-                Close
-              </Button>
-              <Button
-                color={"white"}
-                backgroundColor="primaryBlue"
-                _hover={{ bg: "darkBlue" }}
-              >
-                Add
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        <Modal
-          isOpen={deleteDisclosure.isOpen}
-          onClose={deleteDisclosure.onClose}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Konfirmasi</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              Apakah Anda yakin ingin menghapus kategori {deleteCategory}?
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                colorScheme="gray"
-                mr={3}
-                onClick={deleteDisclosure.onClose}
-              >
-                Batal
-              </Button>
-              <Button colorScheme="red">Hapus</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
       </Card>
+
+      <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={"primaryBlue"}>
+            {isEdit ? "Edit Category" : "Add Category"}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl isRequired>
+              <FormLabel>Name</FormLabel>
+              <Input
+                focusBorderColor="lightBlue"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl isRequired mt={4}>
+              <FormLabel>Description</FormLabel>
+              <Textarea
+                focusBorderColor="lightBlue"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="gray" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button
+              color={"white"}
+              backgroundColor="primaryBlue"
+              _hover={{ bg: "darkBlue" }}
+              onClick={handleSave}
+            >
+              {isEdit ? "Update" : "Add"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={deleteDisclosure.isOpen}
+        onClose={deleteDisclosure.onClose}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmation</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Are you sure you want to delete{" "}
+            <strong>{deleteCategoryData?.name}</strong>?
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="gray"
+              mr={3}
+              onClick={deleteDisclosure.onClose}
+            >
+              Cancel
+            </Button>
+            <Button colorScheme="red" onClick={handleDelete}>
+              Delete
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </LayoutDashboard>
   );
 };
