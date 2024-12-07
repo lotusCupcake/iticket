@@ -1,4 +1,4 @@
-import { Avatar, Box, Icon, Tooltip } from "@chakra-ui/react";
+import { Avatar, Box, Icon, Image, Tooltip } from "@chakra-ui/react";
 import { CgLogOut } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../../api/userApi";
@@ -27,6 +27,16 @@ const Header = ({ user }) => {
           <Icon as={CgLogOut} boxSize={14} color="primaryBlue" />
         </Box>
       </Tooltip>
+      {user?.role !== "ADMIN" && (
+        <Box mr={4}>
+          <Image
+            src="../public/logo-horizontal-blue.png"
+            alt="logo"
+            w={"full"}
+            h="60px"
+          />
+        </Box>
+      )}
       <Tooltip label="Profile" hasArrow placement="left">
         <Avatar
           name={user?.name}

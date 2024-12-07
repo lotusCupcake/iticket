@@ -166,7 +166,7 @@ const ProfilePage = () => {
                 size="md"
                 type="submit"
               >
-                Save
+                Update
               </Button>
             </Flex>
           </CardFooter>
