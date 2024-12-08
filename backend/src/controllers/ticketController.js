@@ -6,6 +6,8 @@ const fs = require("fs");
 const env = require("../config/env");
 const FormData = require("form-data");
 const { imageUpload } = require("../utils/imageUtil");
+const { console } = require("inspector");
+const ROLES = require("../constant/roles");
 
 const ticketController = {
   async createTicket(req, res, next) {
@@ -14,13 +16,15 @@ const ticketController = {
         ...req.body,
         userId: req.user._id,
       });
+
       if (req.file) {
-        const urlUploadResult = await imageUpload(req.file, ticket.attachment);
+        const urlUploadResult = await imageUpload(req.file);
         ticket.attachment = urlUploadResult;
-        await ticket.save();
       }
+
+      await ticket.save();
+
       await History.create({
-        userId: req.user._id,
         ticketId: ticket._id,
         status: ticket.status,
         description: "Ticket Created",
@@ -41,44 +45,134 @@ const ticketController = {
     }
   },
 
-  async getUserTickets(req, res, next) {
-    try {
-      const tickets = await Ticket.find({ userId: req.user._id })
-        .populate("userId", "name")
-        .populate("categoryId", "name");
-
-      return ResponseAPI.success(res, tickets);
-    } catch (error) {
-      console.error("Error fetching user tickets:", error);
-      return next(error);
-    }
-  },
-
-  async getTicketsHandler(req, res, next) {
-    try {
-      const { ticketId } = req.body;
-      const tickets = await Assignment.find({ ticketId }).populate(
-        "userId",
-        "name"
-      );
-
-      return ResponseAPI.success(res, tickets);
-    } catch (error) {
-      console.error("Error fetching user tickets:", error);
-      return next(error);
-    }
-  },
-
-  async getAllTickets(req, res, next) {
+  async getTickets(req, res, next) {
     try {
       const filter = {};
 
       if (req.query.status) {
         filter.status = req.query.status;
       }
-      const tickets = await Ticket.find(filter)
-        .populate("userId", "name")
-        .populate("categoryId", "name");
+
+      const matchConditions = [];
+
+      if (req.user.role === ROLES.STUDENT) {
+        matchConditions.push({ userId: req.user._id });
+      }
+
+      if (req.user.role === ROLES.HANDLER) {
+        matchConditions.push({ "assignments.userId": req.user._id });
+      }
+
+      const tickets = await Ticket.aggregate([
+        { $match: filter },
+        {
+          $lookup: {
+            from: "assignments",
+            localField: "_id",
+            foreignField: "ticketId",
+            as: "assignments",
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categoryId",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $lookup: {
+            from: "histories",
+            localField: "_id",
+            foreignField: "ticketId",
+            as: "histories",
+          },
+        },
+        {
+          $unwind: { path: "$user", preserveNullAndEmptyArrays: true },
+        },
+        {
+          $unwind: { path: "$category", preserveNullAndEmptyArrays: true },
+        },
+        // Nested $lookup untuk assignments.userId -> users
+        {
+          $lookup: {
+            from: "users",
+            localField: "assignments.userId",
+            foreignField: "_id",
+            as: "assignmentUsers",
+          },
+        },
+        {
+          $addFields: {
+            assignments: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: "$assignments",
+                    as: "assignment",
+                    in: {
+                      _id: "$$assignment._id",
+                      resolution: "$$assignment.resolution",
+                      user: {
+                        $arrayElemAt: [
+                          {
+                            $map: {
+                              input: {
+                                $filter: {
+                                  input: "$assignmentUsers",
+                                  as: "user",
+                                  cond: {
+                                    $eq: ["$$user._id", "$$assignment.userId"],
+                                  },
+                                },
+                              },
+                              as: "user",
+                              in: {
+                                _id: "$$user._id",
+                                name: "$$user.name",
+                                email: "$$user.email",
+                              },
+                            },
+                          },
+                          0,
+                        ],
+                      },
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+          },
+        },
+        ...(matchConditions.length > 0
+          ? [{ $match: { $and: matchConditions } }]
+          : []),
+        {
+          $project: {
+            _id: 1,
+            title: 1,
+            description: 1,
+            status: 1,
+            priority: 1,
+            attachment: 1,
+            "category._id": 1,
+            "category.name": 1,
+            assignments: 1, // assignments diubah menjadi object, bukan array
+            histories: 1, // histories tetap ditampilkan
+          },
+        },
+      ]);
 
       return ResponseAPI.success(res, tickets);
     } catch (error) {
@@ -86,47 +180,99 @@ const ticketController = {
       return next(error);
     }
   },
-
-  async updateTicketStatus(req, res, next) {
+  async updateTicket(req, res, next) {
     try {
-      const { _id } = req.user;
-
-      if (!_id) {
-        return ResponseAPI.unauthorized(res, "User  not authenticated");
+      if (req.user.role !== ROLES.ADMIN) {
+        const assignment = await Assignment.find({
+          ticketId: req.params.id,
+        });
+        if (assignment.length > 0) {
+          return ResponseAPI.error(
+            res,
+            "You can't update a ticket that has been assigned to handler",
+            403
+          );
+        }
       }
 
-      const ticket = await Ticket.findOne({ _id: req.params.id, userId: _id });
+      const { categoryId, description, priority, status } = req.body;
 
-      if (!ticket) {
-        return ResponseAPI.notFound(res, "Ticket not found");
+      const ticket = await Ticket.findById(req.params.id);
+
+      if (req.file) {
+        const urlUploadResult = await imageUpload(req.file, ticket.attachment);
+
+        ticket.attachment = urlUploadResult;
       }
 
-      ticket.isDone = true;
+      if (categoryId) {
+        ticket.categoryId = categoryId;
+      }
+
+      if (description) {
+        ticket.description = description;
+      }
+
+      if (priority) {
+        ticket.priority = priority;
+      }
+
+      if (status) {
+        ticket.status = status;
+        const history = new History({
+          ticketId: ticket._id,
+          status: ticket.status,
+          description: "Ticket updated, status changed to " + ticket.status,
+        });
+        await history.save();
+      }
+
       await ticket.save();
 
-      return ResponseAPI.success(res, ticket);
+      ResponseAPI.success(res, ticket, "Ticket updated successfully");
     } catch (error) {
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      console.error("Error updating ticket: ", error);
       return next(error);
     }
   },
 
   async deleteTicket(req, res, next) {
     try {
-      const { id } = req.params;
+      const assignment = await Assignment.find({
+        ticketId: req.params.id,
+      });
+      if (req.user.role !== ROLES.ADMIN) {
+        if (assignment.length > 0) {
+          return ResponseAPI.error(
+            res,
+            "You can't delete a ticket that has been assigned to handler",
+            403
+          );
+        }
+      }
+
+      const id = req.params.id;
 
       if (!id) {
         return ResponseAPI.error(res, "ID not provided!", 400);
       }
 
-      const ticket = await Ticket.findByIdAndDelete(id);
-
-      if (!ticket) {
-        return ResponseAPI.notFound(res, "Ticket not found");
+      try {
+        await Ticket.findByIdAndDelete(id);
+        await History.deleteMany({ ticketId: id });
+        if (assignment.length > 0) {
+          await Assignment.deleteMany({ ticketId: id });
+        }
+      } catch (error) {
+        console.error("Error deleting ticket: ", error);
+        return next(error);
       }
-
       return ResponseAPI.success(res, null, "Ticket deleted successfully");
     } catch (error) {
-      console.error("Error deleting ticket:", error);
+      console.error("Error deleting ticket: ", error);
       return next(error);
     }
   },
