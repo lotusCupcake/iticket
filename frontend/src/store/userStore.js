@@ -15,9 +15,9 @@ const useUserStore = create((set) => ({
 
   accounts: [],
 
-  fetchAccounts: async () => {
+  fetchAccounts: async (role) => {
     try {
-      const accounts = await userApi.getAccounts();
+      const accounts = await userApi.getAccounts(role);
       set({ accounts });
     } catch (error) {
       throw new Error("Failed to get accounts:", error);

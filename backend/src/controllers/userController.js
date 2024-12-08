@@ -75,19 +75,15 @@ const userController = {
 
   async getAccount(req, res, next) {
     try {
-      const users = await User.find({
-        role: { $in: ["STUDENT", "HANDLER"] },
-      }).select("-password -password_salt");
-      ResponseAPI.success(res, users);
-    } catch (error) {
-      next(error);
-    }
-  },
-  async getHandler(req, res, next) {
-    try {
-      const users = await User.find({
-        role: { $in: ["HANDLER"] },
-      }).select("-password -password_salt");
+      let query = {};
+      if (req.query.role) {
+        query.role = req.query.role;
+        query.isActive = true;
+      } else {
+        query.role = { $in: [ROLES.STUDENT, ROLES.HANDLER] };
+      }
+
+      const users = await User.find(query).select("-password -password_salt");
       ResponseAPI.success(res, users);
     } catch (error) {
       next(error);

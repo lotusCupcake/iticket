@@ -20,7 +20,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/tickets", ticketRoutes);
-app.use("/api/assignment", assignmentRoutes);
+app.use("/api/assignments", assignmentRoutes);
 
 app.use(errorHandler);
 

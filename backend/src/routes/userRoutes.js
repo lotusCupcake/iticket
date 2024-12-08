@@ -20,12 +20,6 @@ router.get(
   authorizeRoles([ROLES.ADMIN]),
   userController.getAccount
 );
-router.get(
-  "/handler",
-  authentication,
-  authorizeRoles([ROLES.ADMIN]),
-  userController.getHandler
-);
 router.put(
   "/profile",
   authentication,
