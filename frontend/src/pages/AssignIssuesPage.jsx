@@ -195,7 +195,7 @@ const AssignIssuesPage = () => {
       header: "Handler",
       cell: (info) => {
         const value = info.getValue();
-        return value ? value : <Text color="red">Belum diassign</Text>;
+        return value ? value : <Text color="red">UNASSIGN</Text>;
       },
     }),
     columnHelper.accessor("actions", {

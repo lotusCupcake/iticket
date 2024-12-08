@@ -162,7 +162,7 @@ const RegisterPage = () => {
         </HStack>
         <Select
           name="role"
-          placeholder="Select role"
+          placeholder="Select Role"
           size="lg"
           mb={4}
           focusBorderColor="primaryBlue"

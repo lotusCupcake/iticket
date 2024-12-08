@@ -336,8 +336,8 @@ const MyTicketPage = () => {
                     category: { _id: e.target.value },
                   })
                 }
+                placeholder="Select Category"
               >
-                <option value="">Select Category</option>
                 {categories.map((category) => (
                   <option key={category._id} value={category._id}>
                     {category.name}
@@ -353,8 +353,8 @@ const MyTicketPage = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, priority: e.target.value })
                 }
+                placeholder="Select Priority"
               >
-                <option value="">Select Priority</option>
                 {Object.values(PRIORITIES).map((priority) => (
                   <option key={priority} value={priority}>
                     {priority}
