@@ -3,32 +3,41 @@ const Ticket = require("../models/Ticket");
 const User = require("../models/User");
 const History = require("../models/History");
 const ResponseAPI = require("../utils/response");
+const STATUES = require("../constant/statues");
 
 const assignmentController = {
-  async createAssignment(req, res) {
+  async createAssignment(req, res, next) {
     try {
-      const { userId, ticketId, resolution } = req.body;
+      const { userId, ticketId } = req.body;
 
       const user = await User.findById(userId);
       const ticket = await Ticket.findById(ticketId);
+
       if (!user || !ticket) {
-        return ResponseAPI.notFound(res, "User  or Ticket not found");
+        return ResponseAPI.notFound(res, "User or Ticket not found");
       }
 
       const assignment = new Assignment({
         userId,
         ticketId,
-        status: ticket.status,
-        resolution,
       });
 
       await assignment.save();
-      return res
-        .status(201)
-        .json({ message: "Assignment created successfully", assignment });
+
+      await History.create({
+        ticketId: ticket._id,
+        status: STATUES.ASSIGNED,
+        description: "Ticket Assigned",
+      });
+
+      return ResponseAPI.success(
+        res,
+        assignment,
+        "Assignment created successfully"
+      );
     } catch (error) {
       console.error("Error creating assignment:", error);
-      return res.status(500).json({ message: error.message });
+      return next(error);
     }
   },
 

@@ -54,9 +54,10 @@ const signOut = async () => {
   localStorage.removeItem("token");
 };
 
-const getAccounts = async () => {
+const getAccounts = async (role) => {
   try {
-    const { data } = await axiosInstance.get("/users/accounts");
+    const params = role ? { role } : {};
+    const { data } = await axiosInstance.get("/users/accounts", { params });
     return data.data;
   } catch (error) {
     throw error;
