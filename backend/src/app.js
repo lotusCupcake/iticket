@@ -6,7 +6,6 @@ const errorHandler = require("./middleware/errorHandler");
 const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const ticketRoutes = require("./routes/ticketRouter");
-const historyRoutes = require("./routes/historyRouter");
 const assignmentRoutes = require("./routes/assignmentRoutes");
 const morgan = require("morgan");
 
@@ -14,14 +13,13 @@ const app = express();
 
 connectDB();
 
-app.use(morgan("dev"));
+// app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/tickets", ticketRoutes);
-app.use("/api/history", historyRoutes);
 app.use("/api/assignment", assignmentRoutes);
 
 app.use(errorHandler);

@@ -81,48 +81,48 @@ const categories = [
   },
 ];
 
-const createTickets = async (userId, categoryId) => {
-  const tickets = [
-    {
-      userId,
-      categoryId,
-      description: "Tidak Muncul Tagihan",
-      priority: "MEDIUM",
-      attachment: "laporan.jpg",
-      status: "OPEN",
-    },
-    {
-      userId,
-      categoryId,
-      description: "Terjadi Kerusakan Pintu Toilet",
-      priority: "HIGH",
-      attachment: "lampiran.jpg",
-      status: "OPEN",
-    },
-  ];
+// const createTickets = async (userId, categoryId) => {
+//   const tickets = [
+//     {
+//       userId,
+//       categoryId,
+//       description: "Tidak Muncul Tagihan",
+//       priority: "MEDIUM",
+//       attachment: "laporan.jpg",
+//       status: "OPEN",
+//     },
+//     {
+//       userId,
+//       categoryId,
+//       description: "Terjadi Kerusakan Pintu Toilet",
+//       priority: "HIGH",
+//       attachment: "lampiran.jpg",
+//       status: "OPEN",
+//     },
+//   ];
 
-  const createdTickets = await Ticket.create(tickets);
+//   const createdTickets = await Ticket.create(tickets);
 
-  const histories = createdTickets.map((ticket) => ({
-    ticketId: ticket._id,
-    status: ticket.status,
-    description: ticket.description,
-  }));
+//   const histories = createdTickets.map((ticket) => ({
+//     ticketId: ticket._id,
+//     status: ticket.status,
+//     description: ticket.description,
+//   }));
 
-  await History.create(histories);
+//   await History.create(histories);
 
-  return createdTickets;
-};
+//   return createdTickets;
+// };
 
-const createAssignments = async (userId, tickets) => {
-  const assignments = tickets.map((ticket) => ({
-    userId,
-    ticketId: ticket._id,
-    resolution: "Harap Segera Menemui Admin di kampus",
-  }));
+// const createAssignments = async (userId, tickets) => {
+//   const assignments = tickets.map((ticket) => ({
+//     userId,
+//     ticketId: ticket._id,
+//     resolution: "Harap Segera Menemui Admin di kampus",
+//   }));
 
-  await Assignment.create(assignments);
-};
+//   await Assignment.create(assignments);
+// };
 
 const seedDatabase = async () => {
   try {
@@ -141,12 +141,12 @@ const seedDatabase = async () => {
 
     const createdCategories = await Category.create(categories);
 
-    for (const user of createdUsers) {
-      for (const category of createdCategories) {
-        const createdTickets = await createTickets(user._id, category._id);
-        await createAssignments(user._id, createdTickets);
-      }
-    }
+    // for (const user of createdUsers) {
+    //   for (const category of createdCategories) {
+    //     const createdTickets = await createTickets(user._id, category._id);
+    //     await createAssignments(user._id, createdTickets);
+    //   }
+    // }
 
     console.log("Database seeded successfully!");
   } catch (error) {

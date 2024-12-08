@@ -12,11 +12,6 @@ const assignmentSchema = new mongoose.Schema(
       ref: "Ticket",
       required: [true, "Ticket ID is required"],
     },
-    status: {
-      type: mongoose.Schema.Types.String,
-      ref: "Ticket",
-      required: [true, "Status is required"],
-    },
     resolution: {
       type: String,
       default: null,

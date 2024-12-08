@@ -14,27 +14,25 @@ router.post(
   ticketController.createTicket
 );
 
-router.get("/user", authentication, ticketController.getUserTickets);
-
 router.get(
   "/",
   authentication,
-  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER]),
-  ticketController.getAllTickets
+  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER, ROLES.STUDENT]),
+  ticketController.getTickets
 );
-router.get("/handler", authentication, ticketController.getTicketsHandler);
 
 router.put(
   "/:id",
   authentication,
-  authorizeRoles([ROLES.ADMIN]),
-  ticketController.updateTicketStatus
+  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER, ROLES.STUDENT]),
+  upload.single("attachment"),
+  ticketController.updateTicket
 );
 
 router.delete(
   "/:id",
   authentication,
-  authorizeRoles([ROLES.STUDENT]),
+  authorizeRoles([ROLES.ADMIN, ROLES.STUDENT]),
   ticketController.deleteTicket
 );
 
