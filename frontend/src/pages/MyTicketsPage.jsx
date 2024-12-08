@@ -466,8 +466,8 @@ const MyTicketPage = () => {
               <CardBody>
                 {record.histories && record.histories.length > 0 ? (
                   record.histories.map((history) => (
-                    <Flex justify="space-between" key={history._id}>
-                      <Flex direction="column">
+                    <Flex justify="space-between" key={history._id} w="100%">
+                      <Flex direction="column" mb={4}>
                         <Text fontWeight="bold" color="gray.600">
                           Status
                         </Text>
@@ -487,7 +487,7 @@ const MyTicketPage = () => {
                           {history.status}
                         </Badge>
                       </Flex>
-                      <Flex direction="column">
+                      <Flex direction="column" w="50%">
                         <Text fontWeight="bold" color="gray.600">
                           Tanggal
                         </Text>
