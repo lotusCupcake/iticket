@@ -78,9 +78,7 @@ const MyTicketPage = () => {
 
   const openRecordModal = (ticket) => {
     setRecord({
-      handler: ticket.assignments
-        ? ticket.assignments.user.name
-        : "Belum diassign",
+      handler: ticket.assignments ? ticket.assignments.user.name : "UNASSIGN",
 
       resolution:
         ticket.assignments && ticket.assignments.resolution !== null
@@ -461,7 +459,9 @@ const MyTicketPage = () => {
               <Input
                 value={record.handler}
                 isReadOnly
-                focusBorderColor="lightBlue"
+                focusBorderColor={
+                  record.handler === "UNASSIGN" ? "red.500" : "lightBlue"
+                }
               />
             </FormControl>
             <Card boxShadow="md" mb={4}>
