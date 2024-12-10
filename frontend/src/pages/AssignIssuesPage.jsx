@@ -248,7 +248,7 @@ const AssignIssuesPage = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader color={"primaryBlue"}>Assign Ticket</ModalHeader>
+          <ModalHeader color={"primaryBlue"}>Assign Issue</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl isRequired mt={4}>
@@ -289,7 +289,7 @@ const AssignIssuesPage = () => {
               </FormControl>
             </Flex>
             <FormControl isRequired mt={4}>
-              <FormLabel>Assign To</FormLabel>
+              <FormLabel>Assign to</FormLabel>
               <Select
                 focusBorderColor="lightBlue"
                 placeholder="Select Handler"
