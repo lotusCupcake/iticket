@@ -12,6 +12,18 @@ const addAssignment = async (userId, ticketId) => {
   }
 };
 
+const updateAssignment = async (id, resolution) => {
+  try {
+    const { data } = await axiosInstance.put("/assignments/" + id, {
+      resolution,
+    });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const assignmentsApi = {
   addAssignment,
+  updateAssignment,
 };

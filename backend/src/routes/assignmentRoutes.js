@@ -12,7 +12,7 @@ router.post(
   assignmentController.createAssignment
 );
 router.put(
-  "/",
+  "/:id",
   authentication,
   authorizeRoles([ROLES.HANDLER]),
   assignmentController.updateAssignment
