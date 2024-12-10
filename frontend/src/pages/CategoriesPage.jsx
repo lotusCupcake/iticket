@@ -17,6 +17,7 @@ import {
   ModalOverlay,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -32,19 +33,17 @@ const CategoriesPage = () => {
   const categories = useCategoriesStore((state) => state.categories);
   const fetchCategories = useCategoriesStore((state) => state.fetchCategories);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isEdit, setIsEdit] = useState(false);
-  const [formData, setFormData] = useState({ name: "", description: "" });
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
-
-  const [deleteCategoryData, setDeleteCategoryData] = useState(null);
-  const deleteDisclosure = useDisclosure();
-
-  const toast = useToast();
-
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  const [formData, setFormData] = useState({ name: "", description: "" });
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [deleteCategoryData, setDeleteCategoryData] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const deleteDisclosure = useDisclosure();
 
   const openAddModal = () => {
     setIsEdit(false);
@@ -58,6 +57,8 @@ const CategoriesPage = () => {
     setSelectedCategoryId(category._id);
     onOpen();
   };
+
+  const toast = useToast();
 
   const handleSave = async () => {
     try {
@@ -144,24 +145,28 @@ const CategoriesPage = () => {
       header: "Actions",
       cell: (info) => (
         <>
-          <Button
-            size="sm"
-            colorScheme="yellow"
-            mr={2}
-            onClick={() => openEditModal(info.row.original)}
-          >
-            <Icon as={FaPen} />
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="red"
-            onClick={() => {
-              setDeleteCategoryData(info.row.original);
-              deleteDisclosure.onOpen();
-            }}
-          >
-            <Icon as={FaTrash} />
-          </Button>
+          <Tooltip label="Edit" hasArrow placement="top">
+            <Button
+              size="sm"
+              colorScheme="yellow"
+              mr={2}
+              onClick={() => openEditModal(info.row.original)}
+            >
+              <Icon as={FaPen} />
+            </Button>
+          </Tooltip>{" "}
+          <Tooltip label="Delete" hasArrow placement="top">
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={() => {
+                setDeleteCategoryData(info.row.original);
+                deleteDisclosure.onOpen();
+              }}
+            >
+              <Icon as={FaTrash} />
+            </Button>
+          </Tooltip>
         </>
       ),
     }),

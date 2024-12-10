@@ -21,13 +21,18 @@ import { userApi } from "../api/userApi";
 const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
   const fetchProfile = useUserStore((state) => state.fetchProfile);
-  const toast = useToast();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const [formValues, setFormValues] = useState({
     name: user?.name || "",
     password: "",
     photo: null,
   });
+
+  const toast = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,10 +79,6 @@ const ProfilePage = () => {
       setFormValues((prev) => ({ ...prev, photo: e.target.files[0] }));
     }
   };
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   return (
     <LayoutDashboard>

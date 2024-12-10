@@ -4,12 +4,10 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Flex,
   FormControl,
   FormLabel,
   Icon,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -30,32 +28,27 @@ import {
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
 import { useState, useEffect } from "react";
-import {
-  FaArrowsRotate,
-  FaEye,
-  FaFile,
-  FaFileImage,
-  FaFolderClosed,
-  FaPen,
-  FaPlus,
-  FaTrash,
-  FaUser,
-} from "react-icons/fa6";
+import { FaArrowsRotate, FaFileImage } from "react-icons/fa6";
 import { ticketsApi } from "../api/ticketsApi";
 import { assignmentsApi } from "../api/assignmentsApi";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
 import useTicketsStore from "../store/ticketsStore";
-import useUserStore from "../store/userStore";
 import { PRIORITIES } from "../constant/priorities";
-import { ROLES } from "../constant/roles";
 import { STATUES } from "../constant/statues";
 
 const HandlingIssuesPage = () => {
   const tickets = useTicketsStore((state) => state.tickets);
   const fetchTickets = useTicketsStore((state) => state.fetchTickets);
-  const [status, setStatus] = useState(STATUES.OPEN);
 
+  useEffect(() => {
+    fetchTickets(STATUES.OPEN);
+  }, []);
+
+  const [status, setStatus] = useState(STATUES.OPEN);
+  const [initialResolution, setInitialResolution] = useState("");
+  const [initialStatus, setInitialStatus] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState(null);
   const [formData, setFormData] = useState({
     _id: "",
     category: { name: "" },
@@ -65,24 +58,25 @@ const HandlingIssuesPage = () => {
     assignments: { _id: "", resolution: "" },
   });
 
-  const [initialResolution, setInitialResolution] = useState("");
-  const [initialStatus, setInitialStatus] = useState("");
-
   const assignDisclosure = useDisclosure();
-
-  const [attachmentUrl, setAttachmentUrl] = useState(null);
   const attachmentDisclosure = useDisclosure();
+
+  const handleTabChange = (index) => {
+    const newStatus = Object.values(STATUES).filter(
+      (value) => value !== STATUES.ASSIGNED
+    )[index];
+    setStatus(newStatus);
+    fetchTickets(newStatus);
+  };
+
+  const activeTabIndex = Object.values(STATUES)
+    .filter((value) => value !== STATUES.ASSIGNED)
+    .indexOf(status);
 
   const openAttachmentModal = (url) => {
     setAttachmentUrl(url);
     attachmentDisclosure.onOpen();
   };
-
-  const toast = useToast();
-
-  useEffect(() => {
-    fetchTickets(STATUES.OPEN);
-  }, []);
 
   const openHandlingModal = (ticket) => {
     setFormData(ticket);
@@ -90,6 +84,8 @@ const HandlingIssuesPage = () => {
     setInitialStatus(ticket.status);
     assignDisclosure.onOpen();
   };
+
+  const toast = useToast();
 
   const handleHandling = async () => {
     try {
@@ -173,6 +169,12 @@ const HandlingIssuesPage = () => {
         return <Badge colorScheme={colorScheme}>{value}</Badge>;
       },
     }),
+    columnHelper.accessor("user.name", {
+      header: "Student",
+      cell: (info) => {
+        return info.getValue();
+      },
+    }),
     columnHelper.accessor("assignments.resolution", {
       header: "Resolution",
       cell: (info) => (info.getValue() ? info.getValue() : "-"),
@@ -192,18 +194,6 @@ const HandlingIssuesPage = () => {
       ),
     }),
   ];
-
-  const handleTabChange = (index) => {
-    const newStatus = Object.values(STATUES).filter(
-      (value) => value !== STATUES.ASSIGNED
-    )[index];
-    setStatus(newStatus);
-    fetchTickets(newStatus);
-  };
-
-  const activeTabIndex = Object.values(STATUES)
-    .filter((value) => value !== STATUES.ASSIGNED)
-    .indexOf(status);
 
   return (
     <LayoutDashboard>

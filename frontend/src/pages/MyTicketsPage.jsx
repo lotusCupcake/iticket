@@ -9,7 +9,6 @@ import {
   FormLabel,
   Icon,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,14 +19,13 @@ import {
   Select,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
 import { useState, useEffect } from "react";
 import {
-  FaEye,
-  FaFile,
   FaFileImage,
   FaFolderClosed,
   FaPen,
@@ -48,7 +46,12 @@ const MyTicketPage = () => {
   const tickets = useTicketsStore((state) => state.tickets);
   const fetchTickets = useTicketsStore((state) => state.fetchTickets);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  useEffect(() => {
+    fetchTickets();
+    fetchCategories();
+  }, []);
+
+  const [attachmentUrl, setAttachmentUrl] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     category: [],
@@ -61,15 +64,12 @@ const MyTicketPage = () => {
     resolution: "",
     histories: [],
   });
-
   const [selectedTicketId, setSelectedTicketId] = useState(null);
-
   const [deleteTicketData, setDeleteTicketData] = useState(null);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteDisclosure = useDisclosure();
-
-  const [attachmentUrl, setAttachmentUrl] = useState(null);
   const attachmentDisclosure = useDisclosure();
-
   const {
     isOpen: isOpenRecord,
     onOpen: onOpenRecord,
@@ -94,13 +94,6 @@ const MyTicketPage = () => {
     attachmentDisclosure.onOpen();
   };
 
-  const toast = useToast();
-
-  useEffect(() => {
-    fetchTickets();
-    fetchCategories();
-  }, []);
-
   const openAddModal = () => {
     setIsEdit(false);
     setFormData({
@@ -118,6 +111,8 @@ const MyTicketPage = () => {
     setSelectedTicketId(ticket._id);
     onOpen();
   };
+
+  const toast = useToast();
 
   const handleSave = async () => {
     try {
@@ -270,26 +265,38 @@ const MyTicketPage = () => {
       header: "Actions",
       cell: (info) => (
         <>
-          <Button
-            size="sm"
-            colorScheme="yellow"
-            mr={2}
-            onClick={() => openEditModal(info.row.original)}
-            disabled={!!info.row.original.assignments}
+          <Tooltip
+            label={info.row.original.assignments ? "Assigned" : "Edit"}
+            hasArrow
+            placement="top"
           >
-            <Icon as={FaPen} />
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="red"
-            onClick={() => {
-              setDeleteTicketData(info.row.original);
-              deleteDisclosure.onOpen();
-            }}
-            disabled={!!info.row.original.assignments}
+            <Button
+              size="sm"
+              colorScheme="yellow"
+              mr={2}
+              onClick={() => openEditModal(info.row.original)}
+              disabled={!!info.row.original.assignments}
+            >
+              <Icon as={FaPen} />
+            </Button>
+          </Tooltip>
+          <Tooltip
+            label={info.row.original.assignments ? "Assigned" : "Delete"}
+            hasArrow
+            placement="top"
           >
-            <Icon as={FaTrash} />
-          </Button>
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={() => {
+                setDeleteTicketData(info.row.original);
+                deleteDisclosure.onOpen();
+              }}
+              disabled={!!info.row.original.assignments}
+            >
+              <Icon as={FaTrash} />
+            </Button>
+          </Tooltip>
         </>
       ),
     }),

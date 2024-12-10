@@ -161,7 +161,9 @@ const ticketController = {
         {
           $project: {
             _id: 1,
-            title: 1,
+            "user._id": 1,
+            "user.name": 1,
+            "user.email": 1,
             description: 1,
             status: 1,
             priority: 1,
