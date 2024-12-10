@@ -9,7 +9,6 @@ import {
   FormLabel,
   Icon,
   Input,
-  Link,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,21 +19,13 @@ import {
   Select,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
 import { useState, useEffect } from "react";
-import {
-  FaEye,
-  FaFile,
-  FaFileImage,
-  FaFolderClosed,
-  FaPen,
-  FaPlus,
-  FaTrash,
-  FaUser,
-} from "react-icons/fa6";
+import { FaFileImage, FaTrash, FaUser } from "react-icons/fa6";
 import { ticketsApi } from "../api/ticketsApi";
 import { assignmentsApi } from "../api/assignmentsApi";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -50,11 +41,15 @@ const AssignIssuesPage = () => {
   const handlers = useUserStore((state) => state.accounts);
   const fetchHandlers = useUserStore((state) => state.fetchAccounts);
 
-  const [formData, setFormData] = useState({ userId: "", ticketId: "" });
+  useEffect(() => {
+    fetchTickets();
+    fetchHandlers(ROLES.HANDLER);
+  }, []);
 
-  const assignDisclosure = useDisclosure();
+  const [formData, setFormData] = useState({ userId: "", ticketId: "" });
   const [dataTicket, setDataTicket] = useState([]);
 
+  const assignDisclosure = useDisclosure();
   const [deleteTicketData, setDeleteTicketData] = useState(null);
   const deleteDisclosure = useDisclosure();
 
@@ -65,19 +60,13 @@ const AssignIssuesPage = () => {
     setAttachmentUrl(url);
     attachmentDisclosure.onOpen();
   };
-
-  const toast = useToast();
-
-  useEffect(() => {
-    fetchTickets();
-    fetchHandlers(ROLES.HANDLER);
-  }, []);
-
   const openAssignModal = (ticket) => {
     setFormData({ ...formData, ticketId: ticket._id });
     setDataTicket(ticket);
     assignDisclosure.onOpen();
   };
+
+  const toast = useToast();
 
   const handleAssign = async () => {
     try {
@@ -174,6 +163,12 @@ const AssignIssuesPage = () => {
         return <Badge colorScheme={colorScheme}>{value}</Badge>;
       },
     }),
+    columnHelper.accessor("user.name", {
+      header: "Student",
+      cell: (info) => {
+        return info.getValue();
+      },
+    }),
     columnHelper.accessor("status", {
       header: "Status",
       cell: (info) => {
@@ -204,25 +199,33 @@ const AssignIssuesPage = () => {
       header: "Actions",
       cell: (info) => (
         <>
-          <Button
-            size="sm"
-            colorScheme="blue"
-            mr={2}
-            disabled={!!info.row.original.assignments}
-            onClick={() => openAssignModal(info.row.original)}
+          <Tooltip
+            label={info.row.original.assignments ? "Assigned" : "Assign"}
+            hasArrow
+            placement="top"
           >
-            <Icon as={FaUser} />
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="red"
-            onClick={() => {
-              setDeleteTicketData(info.row.original);
-              deleteDisclosure.onOpen();
-            }}
-          >
-            <Icon as={FaTrash} />
-          </Button>
+            <Button
+              size="sm"
+              colorScheme="blue"
+              mr={2}
+              disabled={!!info.row.original.assignments}
+              onClick={() => openAssignModal(info.row.original)}
+            >
+              <Icon as={FaUser} />
+            </Button>
+          </Tooltip>
+          <Tooltip label="Edit" hasArrow placement="top">
+            <Button
+              size="sm"
+              colorScheme="red"
+              onClick={() => {
+                setDeleteTicketData(info.row.original);
+                deleteDisclosure.onOpen();
+              }}
+            >
+              <Icon as={FaTrash} />
+            </Button>
+          </Tooltip>
         </>
       ),
     }),

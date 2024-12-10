@@ -30,11 +30,11 @@ const AccountsPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [newStatus, setNewStatus] = useState("");
 
-  const toast = useToast();
-
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  const toast = useToast();
 
   const handleSelectChange = (user, status) => {
     setSelectedUser(user);
