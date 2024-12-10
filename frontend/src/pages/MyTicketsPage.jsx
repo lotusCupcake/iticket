@@ -250,7 +250,9 @@ const MyTicketPage = () => {
         } else {
           colorScheme = "red";
         }
-        return <Badge colorScheme={colorScheme}>{value}</Badge>;
+        return (
+          <Badge colorScheme={colorScheme}>{value.replace(/_/g, " ")}</Badge>
+        );
       },
     }),
     columnHelper.accessor("record", {
@@ -484,7 +486,7 @@ const MyTicketPage = () => {
                               : "red"
                           }
                         >
-                          {history.status}
+                          {history.status.replace(/_/g, " ")}
                         </Badge>
                       </Flex>
                       <Flex direction="column" w="50%">
