@@ -188,7 +188,9 @@ const AssignIssuesPage = () => {
         } else {
           colorScheme = "red";
         }
-        return <Badge colorScheme={colorScheme}>{value}</Badge>;
+        return (
+          <Badge colorScheme={colorScheme}>{value.replace(/_/g, " ")}</Badge>
+        );
       },
     }),
     columnHelper.accessor("assignments.user.name", {
@@ -318,7 +320,7 @@ const AssignIssuesPage = () => {
               _hover={{ bg: "darkBlue" }}
               onClick={handleAssign}
             >
-              Add
+              Assign
             </Button>
           </ModalFooter>
         </ModalContent>
