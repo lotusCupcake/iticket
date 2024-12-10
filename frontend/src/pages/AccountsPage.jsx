@@ -13,6 +13,7 @@ import {
   ModalOverlay,
   Select,
   Text,
+  Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import LayoutDashboard from "../layouts/LayoutDashboard";
@@ -89,16 +90,18 @@ const AccountsPage = () => {
     columnHelper.accessor("isActive", {
       header: "Status",
       cell: (info) => (
-        <Select
-          focusBorderColor="primaryBlue"
-          defaultValue={info.getValue() ? "active" : "inactive"}
-          onChange={(e) =>
-            handleSelectChange(info.row.original, e.target.value)
-          }
-        >
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </Select>
+        <Tooltip label="Change status" hasArrow placement="left">
+          <Select
+            focusBorderColor="primaryBlue"
+            defaultValue={info.getValue() ? "active" : "inactive"}
+            onChange={(e) =>
+              handleSelectChange(info.row.original, e.target.value)
+            }
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </Select>
+        </Tooltip>
       ),
     }),
   ];
