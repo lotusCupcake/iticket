@@ -241,14 +241,14 @@ const ticketController = {
 
   async deleteTicket(req, res, next) {
     try {
-      const assignment = await Assignment.find({
-        ticketId: req.params.id,
-      });
-      if (req.user.role !== ROLES.ADMIN) {
+      if (req.user.role === ROLES.STUDENT) {
+        const assignment = await Assignment.find({
+          ticketId: req.params.id,
+        });
         if (assignment.length > 0) {
           return ResponseAPI.error(
             res,
-            "You can't delete a ticket that has been assigned to handler",
+            "You can't update a ticket that has been assigned to handler",
             403
           );
         }

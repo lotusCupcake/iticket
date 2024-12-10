@@ -462,6 +462,9 @@ const MyTicketPage = () => {
                 focusBorderColor={
                   record.handler === "UNASSIGN" ? "red.500" : "lightBlue"
                 }
+                borderColor={
+                  record.handler === "UNASSIGN" ? "red.500" : "lightBlue"
+                }
               />
             </FormControl>
             <Card boxShadow="md" mb={4}>
