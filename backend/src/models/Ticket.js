@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const PRIORITIES = require("../constant/priorities");
+const STATUES = require("../constant/statues");
 
 const ticketSchema = new mongoose.Schema(
   {
@@ -18,7 +20,7 @@ const ticketSchema = new mongoose.Schema(
     },
     priority: {
       type: String,
-      enum: ["LOW", "MEDIUM", "HIGH"],
+      enum: [PRIORITIES.LOW, PRIORITIES.MEDIUM, PRIORITIES.HIGH],
       required: [true, "Priority is required"],
     },
     attachment: {
@@ -27,7 +29,12 @@ const ticketSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["OPEN", "IN_PROGRESS", "RESOLVED", "UNRESOLVED"],
+      enum: [
+        STATUES.OPEN,
+        STATUES.IN_PROGRESS,
+        STATUES.RESOLVED,
+        STATUES.UNRESOLVED,
+      ],
       default: "OPEN",
       required: true,
     },

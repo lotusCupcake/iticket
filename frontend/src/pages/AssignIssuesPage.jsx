@@ -34,6 +34,7 @@ import useTicketsStore from "../store/ticketsStore";
 import useUserStore from "../store/userStore";
 import { PRIORITIES } from "../constant/priorities";
 import { ROLES } from "../constant/roles";
+import { STATUES } from "../constant/statues";
 
 const AssignIssuesPage = () => {
   const tickets = useTicketsStore((state) => state.tickets);
@@ -46,11 +47,16 @@ const AssignIssuesPage = () => {
     fetchHandlers(ROLES.HANDLER);
   }, []);
 
-  const [formData, setFormData] = useState({ userId: "", ticketId: "" });
+  const [formData, setFormData] = useState({
+    userId: "",
+    ticketId: "",
+    assignmentId: "",
+  });
   const [dataTicket, setDataTicket] = useState([]);
+  const [isReassign, setIsReassign] = useState(false);
+  const [deleteTicketData, setDeleteTicketData] = useState(null);
 
   const assignDisclosure = useDisclosure();
-  const [deleteTicketData, setDeleteTicketData] = useState(null);
   const deleteDisclosure = useDisclosure();
 
   const [attachmentUrl, setAttachmentUrl] = useState(null);
@@ -61,8 +67,16 @@ const AssignIssuesPage = () => {
     attachmentDisclosure.onOpen();
   };
   const openAssignModal = (ticket) => {
-    setFormData({ ...formData, ticketId: ticket._id });
     setDataTicket(ticket);
+    setFormData({
+      ...formData,
+      userId: ticket?.assignments?.user._id,
+      ticketId: ticket._id,
+      assignmentId: ticket.assignments?._id,
+    });
+    ticket.assignments && ticket.status === STATUES.UNRESOLVED
+      ? setIsReassign(true)
+      : setIsReassign(false);
     assignDisclosure.onOpen();
   };
 
@@ -70,10 +84,18 @@ const AssignIssuesPage = () => {
 
   const handleAssign = async () => {
     try {
-      const response = await assignmentsApi.addAssignment(
-        formData.userId,
-        formData.ticketId
-      );
+      let response = {};
+      if (!isReassign) {
+        response = await assignmentsApi.addAssignment(
+          formData.userId,
+          formData.ticketId
+        );
+      } else {
+        response = await assignmentsApi.updateAssignment(
+          formData.assignmentId,
+          { userId: formData.userId }
+        );
+      }
       toast({
         title: response.message,
         status: "success",
@@ -200,7 +222,13 @@ const AssignIssuesPage = () => {
       cell: (info) => (
         <>
           <Tooltip
-            label={info.row.original.assignments ? "Assigned" : "Assign"}
+            label={
+              info.row.original.assignments
+                ? info.row.original.status == STATUES.UNRESOLVED
+                  ? "Reassign"
+                  : "Assigned"
+                : "Assign"
+            }
             hasArrow
             placement="top"
           >
@@ -208,7 +236,10 @@ const AssignIssuesPage = () => {
               size="sm"
               colorScheme="blue"
               mr={2}
-              disabled={!!info.row.original.assignments}
+              disabled={
+                !!info.row.original.assignments &&
+                info.row.original.status !== STATUES.UNRESOLVED
+              }
               onClick={() => openAssignModal(info.row.original)}
             >
               <Icon as={FaUser} />
@@ -236,7 +267,7 @@ const AssignIssuesPage = () => {
       <Card boxShadow="md">
         <CardHeader>
           <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-            Assign Issues
+            Issues
           </Text>
         </CardHeader>
         <CardBody>
@@ -251,7 +282,9 @@ const AssignIssuesPage = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader color={"primaryBlue"}>Assign Issue</ModalHeader>
+          <ModalHeader color={"primaryBlue"}>
+            {isReassign ? "Reassign" : "Assign"} Issue
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl isRequired mt={4}>
@@ -292,14 +325,22 @@ const AssignIssuesPage = () => {
               </FormControl>
             </Flex>
             <FormControl isRequired mt={4}>
-              <FormLabel>Assign to</FormLabel>
+              <FormLabel>Resolution</FormLabel>
+              <Textarea
+                focusBorderColor="lightBlue"
+                value={dataTicket?.assignments?.resolution}
+                isReadOnly
+              />
+            </FormControl>
+            <FormControl isRequired mt={4}>
+              <FormLabel>{isReassign ? "Reassign" : "Assign"} to</FormLabel>
               <Select
                 focusBorderColor="lightBlue"
                 placeholder="Select Handler"
                 onChange={(e) =>
                   setFormData({ ...formData, userId: e.target.value })
                 }
-                value={dataTicket?.assignments?.user?._id}
+                value={formData.userId}
               >
                 {handlers.map((handler) => (
                   <option key={handler._id} value={handler._id}>
@@ -323,7 +364,7 @@ const AssignIssuesPage = () => {
               _hover={{ bg: "darkBlue" }}
               onClick={handleAssign}
             >
-              Assign
+              {isReassign ? "Reassign" : "Assign"}
             </Button>
           </ModalFooter>
         </ModalContent>

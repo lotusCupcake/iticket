@@ -23,6 +23,7 @@ import {
   Tabs,
   Text,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -36,6 +37,7 @@ import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
 import useTicketsStore from "../store/ticketsStore";
 import { PRIORITIES } from "../constant/priorities";
 import { STATUES } from "../constant/statues";
+import { Form } from "react-router-dom";
 
 const HandlingIssuesPage = () => {
   const tickets = useTicketsStore((state) => state.tickets);
@@ -63,14 +65,16 @@ const HandlingIssuesPage = () => {
 
   const handleTabChange = (index) => {
     const newStatus = Object.values(STATUES).filter(
-      (value) => value !== STATUES.ASSIGNED
+      (value) => value !== STATUES.ASSIGNED && value !== STATUES.REASSIGNED
     )[index];
     setStatus(newStatus);
     fetchTickets(newStatus);
   };
 
   const activeTabIndex = Object.values(STATUES)
-    .filter((value) => value !== STATUES.ASSIGNED)
+    .filter(
+      (value) => value !== STATUES.ASSIGNED && value !== STATUES.REASSIGNED
+    )
     .indexOf(status);
 
   const openAttachmentModal = (url) => {
@@ -80,7 +84,7 @@ const HandlingIssuesPage = () => {
 
   const openHandlingModal = (ticket) => {
     setFormData(ticket);
-    setInitialResolution(ticket.assignments.resolution);
+    setInitialResolution(ticket?.assignments?.resolution);
     setInitialStatus(ticket.status);
     assignDisclosure.onOpen();
   };
@@ -93,7 +97,7 @@ const HandlingIssuesPage = () => {
       if (formData.assignments.resolution !== initialResolution) {
         response = await assignmentsApi.updateAssignment(
           formData.assignments._id,
-          formData.assignments.resolution
+          { resolution: formData.assignments.resolution }
         );
       }
 
@@ -183,13 +187,28 @@ const HandlingIssuesPage = () => {
       header: "Action",
       cell: (info) => (
         <>
-          <Button
-            size="sm"
-            colorScheme="yellow"
-            onClick={() => openHandlingModal(info.row.original)}
+          <Tooltip
+            label={
+              status === STATUES.RESOLVED
+                ? "Resolved"
+                : status === STATUES.UNRESOLVED
+                ? "Unresolved"
+                : "Update Ticket"
+            }
+            hasArrow
+            placement="top"
           >
-            <Icon as={FaArrowsRotate} />
-          </Button>
+            <Button
+              size="sm"
+              colorScheme="yellow"
+              disabled={
+                status === STATUES.RESOLVED || status === STATUES.UNRESOLVED
+              }
+              onClick={() => openHandlingModal(info.row.original)}
+            >
+              <Icon as={FaArrowsRotate} />
+            </Button>
+          </Tooltip>
         </>
       ),
     }),
@@ -219,7 +238,10 @@ const HandlingIssuesPage = () => {
         >
           <TabList ml={4}>
             {Object.entries(STATUES)
-              .filter(([key]) => key !== STATUES.ASSIGNED)
+              .filter(
+                ([key]) =>
+                  key !== STATUES.ASSIGNED && key !== STATUES.REASSIGNED
+              )
               .map(([key, value]) => (
                 <Tab key={key} value={value}>
                   {value.replace(/_/g, " ")}
@@ -228,7 +250,10 @@ const HandlingIssuesPage = () => {
           </TabList>
           <TabPanels>
             {Object.entries(STATUES)
-              .filter(([key]) => key !== STATUES.ASSIGNED)
+              .filter(
+                ([key]) =>
+                  key !== STATUES.ASSIGNED && key !== STATUES.REASSIGNED
+              )
               .map(([key]) => (
                 <TabPanel key={key}>
                   <CardBody>
@@ -249,89 +274,92 @@ const HandlingIssuesPage = () => {
         <ModalContent>
           <ModalHeader color={"primaryBlue"}>Update Ticket</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Category</FormLabel>
-              <Input
-                type="text"
-                focusBorderColor="lightBlue"
-                value={formData.category.name}
-                isReadOnly
-              />
-            </FormControl>{" "}
-            <FormControl isRequired mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={formData.description}
-                isReadOnly
-              />
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Priority</FormLabel>
-              <Input
-                type="text"
-                focusBorderColor="lightBlue"
-                value={formData.priority}
-                isReadOnly
-              />
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Status</FormLabel>
-              <Select
-                focusBorderColor="lightBlue"
-                value={formData.status}
-                onChange={(e) =>
-                  setFormData({ ...formData, status: e.target.value })
-                }
+          <Form onSubmit={handleHandling}>
+            <ModalBody>
+              <FormControl mt={4}>
+                <FormLabel>Category</FormLabel>
+                <Input
+                  type="text"
+                  focusBorderColor="lightBlue"
+                  defaultValue={formData.category.name}
+                  isReadOnly
+                />
+              </FormControl>{" "}
+              <FormControl mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Textarea
+                  focusBorderColor="lightBlue"
+                  defaultValue={formData.description}
+                  isReadOnly
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Priority</FormLabel>
+                <Input
+                  type="text"
+                  focusBorderColor="lightBlue"
+                  defaultValue={formData.priority}
+                  isReadOnly
+                />
+              </FormControl>
+              <FormControl isRequired mt={4}>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  focusBorderColor="lightBlue"
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value })
+                  }
+                >
+                  {Object.entries(STATUES)
+                    .filter(
+                      ([key]) =>
+                        key !== STATUES.ASSIGNED && key !== STATUES.REASSIGNED
+                    )
+                    .map(([key, value]) => (
+                      <option key={key} value={value}>
+                        {value.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                </Select>
+              </FormControl>
+              {status === STATUES.IN_PROGRESS ? (
+                <FormControl isRequired mt={4}>
+                  <FormLabel>Resolution</FormLabel>
+                  <Textarea
+                    focusBorderColor="lightBlue"
+                    value={formData.assignments.resolution}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        assignments: {
+                          _id: formData.assignments._id,
+                          resolution: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </FormControl>
+              ) : null}
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="gray"
+                mr={3}
+                onClick={assignDisclosure.onClose}
               >
-                {Object.entries(STATUES)
-                  .filter(([key]) => key !== STATUES.ASSIGNED)
-                  .map(([key, value]) => (
-                    <option key={key} value={value}>
-                      {value.replace(/_/g, " ")}
-                    </option>
-                  ))}
-              </Select>
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Resolution</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={formData.assignments.resolution}
-                isReadOnly={
-                  formData.status !== STATUES.RESOLVED &&
-                  formData.status !== STATUES.UNRESOLVED
-                }
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    assignments: {
-                      _id: formData.assignments._id,
-                      resolution: e.target.value,
-                    },
-                  })
-                }
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={assignDisclosure.onClose}
-            >
-              Close
-            </Button>
-            <Button
-              color={"white"}
-              backgroundColor="primaryBlue"
-              _hover={{ bg: "darkBlue" }}
-              onClick={handleHandling}
-            >
-              Update
-            </Button>
-          </ModalFooter>
+                Close
+              </Button>
+              <Button
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                type="submit"
+              >
+                Update
+              </Button>
+            </ModalFooter>
+          </Form>
         </ModalContent>
       </Modal>
       <Modal
