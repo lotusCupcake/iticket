@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const STATUES = require("../constant/statues");
 
 const historySchema = new mongoose.Schema(
   {
@@ -8,13 +9,19 @@ const historySchema = new mongoose.Schema(
       required: [true, "Ticket  ID is required"],
     },
     status: {
-      type: mongoose.Schema.Types.String,
-      ref: "Ticket",
+      type: String,
+      enum: [
+        STATUES.OPEN,
+        STATUES.ASSIGNED,
+        STATUES.IN_PROGRESS,
+        STATUES.RESOLVED,
+        STATUES.UNRESOLVED,
+        STATUES.REASSIGNED,
+      ],
       required: [true, "Status is required"],
     },
     description: {
-      type: mongoose.Schema.Types.String,
-      ref: "Ticket",
+      type: String,
       required: [true, "Description is required"],
     },
   },

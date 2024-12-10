@@ -489,7 +489,8 @@ const MyTicketPage = () => {
                           colorScheme={
                             history.status === STATUES.OPEN
                               ? "yellow"
-                              : history.status === STATUES.ASSIGNED
+                              : history.status === STATUES.ASSIGNED ||
+                                history.status === STATUES.REASSIGNED
                               ? "orange"
                               : history.status === STATUES.IN_PROGRESS
                               ? "blue"

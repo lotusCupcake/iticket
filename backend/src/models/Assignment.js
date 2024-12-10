@@ -14,7 +14,7 @@ const assignmentSchema = new mongoose.Schema(
     },
     resolution: {
       type: String,
-      default: null,
+      default: "",
     },
   },
   {

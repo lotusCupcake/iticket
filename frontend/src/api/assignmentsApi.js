@@ -12,10 +12,12 @@ const addAssignment = async (userId, ticketId) => {
   }
 };
 
-const updateAssignment = async (id, resolution) => {
+const updateAssignment = async (id, { resolution, userId }) => {
+  console.log(userId);
   try {
     const { data } = await axiosInstance.put("/assignments/" + id, {
       resolution,
+      userId,
     });
     return data;
   } catch (error) {

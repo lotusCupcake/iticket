@@ -14,7 +14,7 @@ router.post(
 router.put(
   "/:id",
   authentication,
-  authorizeRoles([ROLES.HANDLER]),
+  authorizeRoles([ROLES.ADMIN, ROLES.HANDLER]),
   assignmentController.updateAssignment
 );
 

@@ -43,7 +43,7 @@ const assignmentController = {
 
   async updateAssignment(req, res, next) {
     try {
-      const resolution = req.body.resolution;
+      const { userId, resolution } = req.body;
 
       const assignment = await Assignment.findById(req.params.id);
 
@@ -51,7 +51,30 @@ const assignmentController = {
         return ResponseAPI.notFound(res, "Assignment not found");
       }
 
-      assignment.resolution = resolution;
+      if (userId) {
+        const ticket = await Ticket.findById(assignment.ticketId);
+        if (ticket.status !== STATUES.UNRESOLVED) {
+          return ResponseAPI.error(
+            res,
+            "Ticket is being handled or already resolved",
+            400
+          );
+        }
+        assignment.userId = userId;
+        assignment.resolution = "";
+        await Ticket.findByIdAndUpdate(assignment.ticketId, {
+          status: STATUES.OPEN,
+        });
+        await History.create({
+          ticketId: ticket._id,
+          status: STATUES.REASSIGNED,
+          description: "Ticket Reassigned",
+        });
+      }
+
+      if (resolution) {
+        assignment.resolution = resolution;
+      }
       await assignment.save();
 
       return ResponseAPI.success(
