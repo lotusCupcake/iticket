@@ -60,7 +60,7 @@ const ticketController = {
       }
 
       if (req.user.role === ROLES.HANDLER) {
-        matchConditions.push({ "assignments.userId": req.user._id });
+        matchConditions.push({ "assignments.user._id": req.user._id });
       }
 
       const tickets = await Ticket.aggregate([
@@ -182,7 +182,7 @@ const ticketController = {
   },
   async updateTicket(req, res, next) {
     try {
-      if (req.user.role !== ROLES.ADMIN) {
+      if (req.user.role === ROLES.STUDENT) {
         const assignment = await Assignment.find({
           ticketId: req.params.id,
         });
