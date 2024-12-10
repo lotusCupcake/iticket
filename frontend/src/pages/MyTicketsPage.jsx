@@ -504,7 +504,7 @@ const MyTicketPage = () => {
                       </Flex>
                       <Flex direction="column" w="50%">
                         <Text fontWeight="bold" color="gray.600">
-                          Tanggal
+                          Date and Time
                         </Text>
                         <Text color="gray.700">
                           {new Intl.DateTimeFormat("id-ID", {
