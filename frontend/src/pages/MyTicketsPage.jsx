@@ -275,6 +275,7 @@ const MyTicketPage = () => {
             colorScheme="yellow"
             mr={2}
             onClick={() => openEditModal(info.row.original)}
+            disabled={!!info.row.original.assignments}
           >
             <Icon as={FaPen} />
           </Button>
@@ -285,6 +286,7 @@ const MyTicketPage = () => {
               setDeleteTicketData(info.row.original);
               deleteDisclosure.onOpen();
             }}
+            disabled={!!info.row.original.assignments}
           >
             <Icon as={FaTrash} />
           </Button>

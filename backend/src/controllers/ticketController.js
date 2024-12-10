@@ -103,7 +103,7 @@ const ticketController = {
         {
           $unwind: { path: "$category", preserveNullAndEmptyArrays: true },
         },
-        // Nested $lookup untuk assignments.userId -> users
+
         {
           $lookup: {
             from: "users",
@@ -168,8 +168,8 @@ const ticketController = {
             attachment: 1,
             "category._id": 1,
             "category.name": 1,
-            assignments: 1, // assignments diubah menjadi object, bukan array
-            histories: 1, // histories tetap ditampilkan
+            assignments: 1,
+            histories: 1,
           },
         },
       ]);
@@ -241,10 +241,11 @@ const ticketController = {
 
   async deleteTicket(req, res, next) {
     try {
+      const assignment = await Assignment.find({
+        ticketId: req.params.id,
+      });
+
       if (req.user.role === ROLES.STUDENT) {
-        const assignment = await Assignment.find({
-          ticketId: req.params.id,
-        });
         if (assignment.length > 0) {
           return ResponseAPI.error(
             res,
