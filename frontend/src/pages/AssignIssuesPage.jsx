@@ -224,8 +224,10 @@ const AssignIssuesPage = () => {
           <Tooltip
             label={
               info.row.original.assignments
-                ? info.row.original.status == STATUES.UNRESOLVED
+                ? info.row.original.status === STATUES.UNRESOLVED
                   ? "Reassign"
+                  : info.row.original.status === STATUES.RESOLVED
+                  ? "Finished"
                   : "Assigned"
                 : "Assign"
             }
@@ -245,7 +247,7 @@ const AssignIssuesPage = () => {
               <Icon as={FaUser} />
             </Button>
           </Tooltip>
-          <Tooltip label="Edit" hasArrow placement="top">
+          <Tooltip label="Delete" hasArrow placement="top">
             <Button
               size="sm"
               colorScheme="red"
@@ -267,7 +269,7 @@ const AssignIssuesPage = () => {
       <Card boxShadow="md">
         <CardHeader>
           <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-            Issues
+            Assign Issues
           </Text>
         </CardHeader>
         <CardBody>

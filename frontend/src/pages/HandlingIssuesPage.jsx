@@ -219,7 +219,7 @@ const HandlingIssuesPage = () => {
       <Card boxShadow="md">
         <CardHeader>
           <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-            Handling Issues
+            Dashboard
           </Text>
         </CardHeader>
         <Tabs
