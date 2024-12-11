@@ -13,7 +13,6 @@ const addAssignment = async (userId, ticketId) => {
 };
 
 const updateAssignment = async (id, { resolution, userId }) => {
-  console.log(userId);
   try {
     const { data } = await axiosInstance.put("/assignments/" + id, {
       resolution,

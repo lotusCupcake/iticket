@@ -30,7 +30,7 @@ const Header = ({ user }) => {
       {user?.role !== "ADMIN" && (
         <Box mr={4}>
           <Image
-            src="../public/logo-horizontal-blue.png"
+            src="/logo-horizontal-blue.png"
             alt="logo"
             w={"full"}
             h="60px"

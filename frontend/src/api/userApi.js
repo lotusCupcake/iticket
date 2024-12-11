@@ -14,7 +14,6 @@ const login = async (email, password) => {
 };
 
 const register = async (name, email, role, password) => {
-  console.log(name, email, role, password);
   try {
     const { data } = await axiosInstance.post("/users/register", {
       name,

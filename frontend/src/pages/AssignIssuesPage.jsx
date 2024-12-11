@@ -35,6 +35,7 @@ import useUserStore from "../store/userStore";
 import { PRIORITIES } from "../constant/priorities";
 import { ROLES } from "../constant/roles";
 import { STATUES } from "../constant/statues";
+import { Form } from "react-router-dom";
 
 const AssignIssuesPage = () => {
   const tickets = useTicketsStore((state) => state.tickets);
@@ -283,118 +284,118 @@ const AssignIssuesPage = () => {
         size={"lg"}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={"primaryBlue"}>
-            {isReassign ? "Reassign" : "Assign"} Issue
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Category</FormLabel>
-              <Input
-                type="text"
-                focusBorderColor="lightBlue"
-                value={dataTicket?.category?.name}
-                isReadOnly
-              />
-            </FormControl>{" "}
-            <FormControl isRequired mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={dataTicket?.description}
-                isReadOnly
-              />
-            </FormControl>
-            <Flex gap={4} mt={4}>
-              <FormControl isRequired flex="1">
-                <FormLabel>Priority</FormLabel>
+        <Form onSubmit={handleAssign}>
+          <ModalContent>
+            <ModalHeader color={"primaryBlue"}>
+              {isReassign ? "Reassign" : "Assign"} Issue
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl mt={4}>
+                <FormLabel>Category</FormLabel>
                 <Input
                   type="text"
                   focusBorderColor="lightBlue"
-                  value={dataTicket?.priority}
+                  defaultValue={dataTicket?.category?.name}
                   isReadOnly
                 />
-              </FormControl>
-              <FormControl isRequired flex="1">
-                <FormLabel>Status</FormLabel>
-                <Input
-                  type="text"
+              </FormControl>{" "}
+              <FormControl mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Textarea
                   focusBorderColor="lightBlue"
-                  value={dataTicket?.status}
+                  defaultValue={dataTicket?.description}
                   isReadOnly
                 />
               </FormControl>
-            </Flex>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Resolution</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={dataTicket?.assignments?.resolution}
-                isReadOnly
-              />
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>{isReassign ? "Reassign" : "Assign"} to</FormLabel>
-              <Select
-                focusBorderColor="lightBlue"
-                placeholder="Select Handler"
-                onChange={(e) =>
-                  setFormData({ ...formData, userId: e.target.value })
-                }
-                value={formData.userId}
+              <Flex gap={4} mt={4}>
+                <FormControl flex="1">
+                  <FormLabel>Priority</FormLabel>
+                  <Input
+                    type="text"
+                    focusBorderColor="lightBlue"
+                    defaultValue={dataTicket?.priority}
+                    isReadOnly
+                  />
+                </FormControl>
+                <FormControl flex="1">
+                  <FormLabel>Status</FormLabel>
+                  <Input
+                    type="text"
+                    focusBorderColor="lightBlue"
+                    defaultValue={dataTicket?.status}
+                    isReadOnly
+                  />
+                </FormControl>
+              </Flex>
+              <FormControl mt={4}>
+                <FormLabel>Resolution</FormLabel>
+                <Textarea
+                  focusBorderColor="lightBlue"
+                  defaultValue={dataTicket?.assignments?.resolution || "-"}
+                  isReadOnly
+                />
+              </FormControl>
+              <FormControl isRequired mt={4}>
+                <FormLabel>{isReassign ? "Reassign" : "Assign"} to</FormLabel>
+                <Select
+                  focusBorderColor="lightBlue"
+                  placeholder="Select Handler"
+                  onChange={(e) =>
+                    setFormData({ ...formData, userId: e.target.value })
+                  }
+                  value={formData.userId}
+                >
+                  {handlers.map((handler) => (
+                    <option key={handler._id} value={handler._id}>
+                      {handler.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="gray"
+                mr={3}
+                onClick={assignDisclosure.onClose}
               >
-                {handlers.map((handler) => (
-                  <option key={handler._id} value={handler._id}>
-                    {handler.name}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={assignDisclosure.onClose}
-            >
-              Close
-            </Button>
-            <Button
-              color={"white"}
-              backgroundColor="primaryBlue"
-              _hover={{ bg: "darkBlue" }}
-              onClick={handleAssign}
-            >
-              {isReassign ? "Reassign" : "Assign"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+                Close
+              </Button>
+              <Button
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                type="submit"
+              >
+                {isReassign ? "Reassign" : "Assign"}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
       <Modal
         isOpen={deleteDisclosure.isOpen}
         onClose={deleteDisclosure.onClose}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete <strong>this ticket</strong>?
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={deleteDisclosure.onClose}
-            >
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={handleDelete}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <Form onSubmit={deleteDisclosure.onClose}>
+          <ModalContent>
+            <ModalHeader>Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to delete <strong>this ticket</strong>?
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="gray" mr={3} type="submit">
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete}>
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
       <Modal
         isOpen={attachmentDisclosure.isOpen}

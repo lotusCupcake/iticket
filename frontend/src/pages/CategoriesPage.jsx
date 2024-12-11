@@ -28,6 +28,7 @@ import { categoriesApi } from "../api/categoriesApi";
 import useCategoriesStore from "../store/categoriesStore";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
+import { Form } from "react-router-dom";
 
 const CategoriesPage = () => {
   const categories = useCategoriesStore((state) => state.categories);
@@ -198,47 +199,49 @@ const CategoriesPage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={"primaryBlue"}>
-            {isEdit ? "Edit Category" : "Add Category"}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isRequired>
-              <FormLabel>Name</FormLabel>
-              <Input
-                focusBorderColor="lightBlue"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="gray" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              color={"white"}
-              backgroundColor="primaryBlue"
-              _hover={{ bg: "darkBlue" }}
-              onClick={handleSave}
-            >
-              {isEdit ? "Update" : "Add"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <Form onSubmit={handleSave}>
+          <ModalContent>
+            <ModalHeader color={"primaryBlue"}>
+              {isEdit ? "Edit Category" : "Add Category"}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl isRequired>
+                <FormLabel>Name</FormLabel>
+                <Input
+                  focusBorderColor="lightBlue"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
+              </FormControl>
+              <FormControl isRequired mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Textarea
+                  focusBorderColor="lightBlue"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="gray" mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                type="submit"
+              >
+                {isEdit ? "Update" : "Add"}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
 
       <Modal
@@ -246,26 +249,28 @@ const CategoriesPage = () => {
         onClose={deleteDisclosure.onClose}
       >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete{" "}
-            <strong>{deleteCategoryData?.name}</strong>?
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={deleteDisclosure.onClose}
-            >
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={handleDelete}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <Form onSubmit={handleDelete}>
+          <ModalContent>
+            <ModalHeader>Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to delete{" "}
+              <strong>{deleteCategoryData?.name}</strong>?
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="gray"
+                mr={3}
+                onClick={deleteDisclosure.onClose}
+              >
+                Cancel
+              </Button>
+              <Button colorScheme="red" type="submit">
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
     </LayoutDashboard>
   );

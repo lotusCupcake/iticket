@@ -74,7 +74,7 @@ const ProfilePage = () => {
   };
 
   const handleFileChange = (e) => {
-    console.log(e.target.files[0]);
+    
     if (e.target.files?.[0]) {
       setFormValues((prev) => ({ ...prev, photo: e.target.files[0] }));
     }

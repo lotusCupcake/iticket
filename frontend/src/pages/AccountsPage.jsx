@@ -22,6 +22,7 @@ import useUserStore from "../store/userStore";
 import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "react-chakra-ui-table-v2/dist/index.ts";
 import { userApi } from "../api/userApi";
+import { Form } from "react-router-dom";
 
 const AccountsPage = () => {
   const accounts = useUserStore((state) => state.accounts);
@@ -123,32 +124,34 @@ const AccountsPage = () => {
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to change the status of user{" "}
-            <b>{selectedUser?.name}</b> to{" "}
-            <b>{newStatus === "active" ? "Active" : "Inactive"}</b>?
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={() => setIsModalOpen(false)}
-            >
-              CLose
-            </Button>
-            <Button
-              color={"white"}
-              backgroundColor="primaryBlue"
-              _hover={{ bg: "darkBlue" }}
-              onClick={handleConfirmChange}
-            >
-              Yes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <Form onSubmit={handleConfirmChange}>
+          <ModalContent>
+            <ModalHeader>Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to change the status of user{" "}
+              <b>{selectedUser?.name}</b> to{" "}
+              <b>{newStatus === "active" ? "Active" : "Inactive"}</b>?
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="gray"
+                mr={3}
+                onClick={() => setIsModalOpen(false)}
+              >
+                CLose
+              </Button>
+              <Button
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                type="submit"
+              >
+                Yes
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
     </LayoutDashboard>
   );

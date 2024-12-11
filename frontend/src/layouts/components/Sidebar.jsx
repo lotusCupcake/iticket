@@ -53,7 +53,7 @@ const Sidebar = ({ navSize, changeNavSize }) => {
       >
         <Flex w="100%" justifyContent="space-between" alignItems="center">
           <Image
-            src="../public/logo-horizontal-white.png"
+            src="/logo-horizontal-white.png"
             mt={1}
             w={"full"}
             h="60px"

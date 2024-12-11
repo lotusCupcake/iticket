@@ -39,6 +39,7 @@ import useTicketsStore from "../store/ticketsStore";
 import useCategoriesStore from "../store/categoriesStore";
 import { PRIORITIES } from "../constant/priorities";
 import { STATUES } from "../constant/statues";
+import { Form } from "react-router-dom";
 
 const MyTicketPage = () => {
   const categories = useCategoriesStore((state) => state.categories);
@@ -328,109 +329,113 @@ const MyTicketPage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader color={"primaryBlue"}>
-            {isEdit ? "Edit Ticket" : "Add Ticket"}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isRequired>
-              <FormLabel>Category</FormLabel>
-              <Select
-                focusBorderColor="lightBlue"
-                value={formData.category?._id}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    category: { _id: e.target.value },
-                  })
-                }
-                placeholder="Select Category"
+        <Form onSubmit={handleSave}>
+          <ModalContent>
+            <ModalHeader color={"primaryBlue"}>
+              {isEdit ? "Edit Ticket" : "Add Ticket"}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl isRequired>
+                <FormLabel>Category</FormLabel>
+                <Select
+                  focusBorderColor="lightBlue"
+                  value={formData.category?._id}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      category: { _id: e.target.value },
+                    })
+                  }
+                  placeholder="Select Category"
+                >
+                  {categories.map((category) => (
+                    <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl isRequired mt={4}>
+                <FormLabel>Priority</FormLabel>
+                <Select
+                  focusBorderColor="lightBlue"
+                  value={formData.priority}
+                  onChange={(e) =>
+                    setFormData({ ...formData, priority: e.target.value })
+                  }
+                  placeholder="Select Priority"
+                >
+                  {Object.values(PRIORITIES).map((priority) => (
+                    <option key={priority} value={priority}>
+                      {priority}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl isRequired mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Textarea
+                  focusBorderColor="lightBlue"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Attachment</FormLabel>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  focusBorderColor="lightBlue"
+                  onChange={handleFileChange}
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="gray" mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button
+                color={"white"}
+                backgroundColor="primaryBlue"
+                _hover={{ bg: "darkBlue" }}
+                type="submit"
               >
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Priority</FormLabel>
-              <Select
-                focusBorderColor="lightBlue"
-                value={formData.priority}
-                onChange={(e) =>
-                  setFormData({ ...formData, priority: e.target.value })
-                }
-                placeholder="Select Priority"
-              >
-                {Object.values(PRIORITIES).map((priority) => (
-                  <option key={priority} value={priority}>
-                    {priority}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl isRequired mt={4}>
-              <FormLabel>Description</FormLabel>
-              <Textarea
-                focusBorderColor="lightBlue"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Attachment</FormLabel>
-              <Input
-                type="file"
-                accept="image/*"
-                focusBorderColor="lightBlue"
-                onChange={handleFileChange}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="gray" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button
-              color={"white"}
-              backgroundColor="primaryBlue"
-              _hover={{ bg: "darkBlue" }}
-              onClick={handleSave}
-            >
-              {isEdit ? "Update" : "Add"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+                {isEdit ? "Update" : "Add"}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
 
       <Modal
         isOpen={deleteDisclosure.isOpen}
         onClose={deleteDisclosure.onClose}
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Confirmation</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Are you sure you want to delete <strong>this ticket</strong>?
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="gray"
-              mr={3}
-              onClick={deleteDisclosure.onClose}
-            >
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={handleDelete}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <Form onSubmit={handleDelete}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Confirmation</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Are you sure you want to delete <strong>this ticket</strong>?
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="gray"
+                mr={3}
+                onClick={deleteDisclosure.onClose}
+              >
+                Cancel
+              </Button>
+              <Button colorScheme="red" type="submit">
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Form>
       </Modal>
       <Modal
         isOpen={attachmentDisclosure.isOpen}
