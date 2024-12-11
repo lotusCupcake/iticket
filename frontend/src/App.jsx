@@ -13,7 +13,7 @@ import {
   ProfilePage,
   RegisterPage,
   UnauthorizedPage,
-} from "./pages/index";
+} from "./pages";
 import { AuthGuard, GuestGuard } from "./providers";
 import { ROLES } from "./constant/roles";
 import useUserStore from "./store/userStore";
