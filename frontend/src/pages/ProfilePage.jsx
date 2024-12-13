@@ -74,7 +74,6 @@ const ProfilePage = () => {
   };
 
   const handleFileChange = (e) => {
-    
     if (e.target.files?.[0]) {
       setFormValues((prev) => ({ ...prev, photo: e.target.files[0] }));
     }
@@ -82,7 +81,7 @@ const ProfilePage = () => {
 
   return (
     <LayoutDashboard>
-      <Card width="30%" boxShadow="md" mx="auto">
+      <Card width={{ base: "full", md: "30%" }} boxShadow="md" mx="auto">
         <CardHeader>
           <Flex alignItems="center" justifyContent="center">
             <Avatar

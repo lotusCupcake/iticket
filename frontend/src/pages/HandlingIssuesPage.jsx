@@ -235,15 +235,27 @@ const HandlingIssuesPage = () => {
               : "red"
           }
           onChange={(index) => handleTabChange(index)}
+          overflowX="auto"
+          width="100%"
         >
-          <TabList ml={4}>
+          <TabList
+            ml={4}
+            display="flex"
+            flexWrap="nowrap"
+            overflowX="auto"
+            css={{
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+            }}
+          >
             {Object.entries(STATUES)
               .filter(
                 ([key]) =>
                   key !== STATUES.ASSIGNED && key !== STATUES.REASSIGNED
               )
               .map(([key, value]) => (
-                <Tab key={key} value={value}>
+                <Tab key={key} value={value} flexShrink={0} minWidth="120px">
                   {value.replace(/_/g, " ")}
                 </Tab>
               ))}
@@ -377,7 +389,7 @@ const HandlingIssuesPage = () => {
                 alt="Attachment"
                 style={{
                   width: "100%",
-                  height: "50vh",
+                  height: "100%",
                   objectFit: "cover",
                 }}
               />

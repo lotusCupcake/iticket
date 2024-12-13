@@ -17,18 +17,25 @@ const LayoutDashboard = ({ children }) => {
 
   return (
     <Flex direction="column" minHeight="100vh" backgroundColor={"coldBlue"}>
+      {/* Sidebar desktop */}
       {user?.role === ROLES.ADMIN && (
-        <Sidebar navSize={navSize} changeNavSize={setNavSize} />
+        <Box display={{ base: "none", md: "block" }}>
+          <Sidebar navSize={navSize} changeNavSize={setNavSize} />
+        </Box>
       )}
+
       <Header user={user} />
+
       <Box
-        ml={
-          user?.role === ROLES.ADMIN
-            ? navSize === "small"
-              ? "75px"
-              : "220px"
-            : "0"
-        }
+        ml={{
+          base: 0,
+          md:
+            user?.role === ROLES.ADMIN
+              ? navSize === "small"
+                ? "75px"
+                : "220px"
+              : "0",
+        }}
         mt={location.pathname === "/profile" ? "40" : "20"}
         mb="16"
         p={4}
@@ -36,6 +43,7 @@ const LayoutDashboard = ({ children }) => {
       >
         {children}
       </Box>
+
       <Footer />
     </Flex>
   );

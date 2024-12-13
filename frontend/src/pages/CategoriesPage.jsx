@@ -179,7 +179,7 @@ const CategoriesPage = () => {
         <CardHeader>
           <Flex justify="space-between" align="center">
             <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-              Categories Management
+              Categories
             </Text>
             <Button
               leftIcon={<FaPlus />}
@@ -188,7 +188,7 @@ const CategoriesPage = () => {
               _hover={{ bg: "darkBlue" }}
               onClick={openAddModal}
             >
-              Add Category
+              Add
             </Button>
           </Flex>
         </CardHeader>
