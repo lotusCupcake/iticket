@@ -13,6 +13,7 @@ import {
   ProfilePage,
   RegisterPage,
   UnauthorizedPage,
+  NotFoundPage,
 } from "./pages";
 import { AuthGuard, GuestGuard } from "./providers";
 import { ROLES } from "./constant/roles";
@@ -114,6 +115,10 @@ const router = createBrowserRouter([
         <AccountsPage />
       </AuthGuard>
     ),
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
 
