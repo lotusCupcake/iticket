@@ -4,11 +4,27 @@ import { userApi } from "../api/userApi";
 const useUserStore = create((set) => ({
   user: null,
 
+  resetUser: () => {
+    set({ user: null });
+  },
+
+  setUser: (userData) => {
+    set({ user: userData });
+  },
+
   fetchProfile: async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      set({ user: null });
+      return null;
+    }
+
     try {
       const user = await userApi.getProfile();
       set({ user });
     } catch (error) {
+      localStorage.removeItem("token");
+      set({ user: null });
       throw new Error("Failed to get profile:", error);
     }
   },
