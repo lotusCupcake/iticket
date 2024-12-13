@@ -412,7 +412,7 @@ const AssignIssuesPage = () => {
                 alt="Attachment"
                 style={{
                   width: "100%",
-                  height: "50vh",
+                  height: "100%",
                   objectFit: "cover",
                 }}
               />

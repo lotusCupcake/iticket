@@ -318,7 +318,7 @@ const MyTicketPage = () => {
               _hover={{ bg: "darkBlue" }}
               onClick={openAddModal}
             >
-              Add Ticket
+              Add
             </Button>
           </Flex>
         </CardHeader>
@@ -452,7 +452,7 @@ const MyTicketPage = () => {
                 alt="Attachment"
                 style={{
                   width: "100%",
-                  height: "50vh",
+                  height: "100%",
                   objectFit: "cover",
                 }}
               />

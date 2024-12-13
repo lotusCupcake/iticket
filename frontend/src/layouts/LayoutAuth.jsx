@@ -13,20 +13,27 @@ const LayoutAuth = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   return (
-    <Flex h="100vh" w="full" alignItems="center" justifyContent="center">
+    <Flex
+      h={{ base: "100%", md: "100vh" }}
+      w="full"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+    >
       <Flex
-        w={{ sm: "90%", md: "900px" }}
+        w={{ base: "90%", md: "900px" }}
         h="auto"
         boxShadow="xl"
         borderRadius="md"
         overflow="hidden"
+        flexDirection={{ base: "column", md: "row" }}
       >
         <Box
-          w="50%"
+          w={{ base: "100%", md: "50%" }}
           bgGradient="linear(to-b, primaryYellow, primaryBlue)"
           color="white"
           p={8}
-          display="flex"
+          display={{ base: "none", md: "flex" }}
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
@@ -42,7 +49,7 @@ const LayoutAuth = ({ children }) => {
             borderBottomWidth={3}
           ></Box>
           <Text fontSize="lg" textAlign="center" mb={4} fontWeight="bold">
-            Your Expertize, Ther Solution
+            Your Expertize, Their Solution
           </Text>
           <Button
             rightIcon={<FaArrowRightToBracket />}
@@ -56,21 +63,24 @@ const LayoutAuth = ({ children }) => {
             }}
             rounded={"2xl"}
             onClick={() =>
-              location.pathname == "/login"
+              location.pathname === "/login"
                 ? navigate("/register")
                 : navigate("/login")
             }
           >
-            {location.pathname == "/login" ? "Sign Up" : "Sign In"}
+            {location.pathname === "/login" ? "Sign Up" : "Sign In"}
           </Button>
         </Box>
+
         <Box
-          w="50%"
+          w={{ base: "100%", md: "50%" }}
           p={7}
+          pt={{ base: 10, md: 7 }}
           bg={useColorModeValue("white")}
           display="flex"
           flexDirection="column"
           justifyContent="center"
+          minH={{ base: "100vh", md: "auto" }}
         >
           <Box display="flex" justifyContent="center" mb={6}>
             <img src="/logo-vertikal-blue.png" alt="Logo" width="150px" />

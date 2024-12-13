@@ -112,7 +112,7 @@ const AccountsPage = () => {
       <Card boxShadow="md">
         <CardHeader>
           <Text fontSize={"2xl"} fontWeight={"bold"} color={"primaryBlue"}>
-            Accounts Management
+            Accounts
           </Text>
         </CardHeader>
         <CardBody>
