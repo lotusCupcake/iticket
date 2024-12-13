@@ -1,3 +1,4 @@
+import useUserStore from "../store/userStore";
 import axiosInstance from "./axiosInstance";
 
 const login = async (email, password) => {
@@ -7,6 +8,8 @@ const login = async (email, password) => {
       password,
     });
     localStorage.setItem("token", data.data.token);
+    const { setUser } = useUserStore.getState();
+    setUser(data.data.user);
     return data;
   } catch (error) {
     throw error;
@@ -50,7 +53,9 @@ const updateProfile = async (formData) => {
 };
 
 const signOut = async () => {
+  const { resetUser } = useUserStore.getState();
   localStorage.removeItem("token");
+  resetUser();
 };
 
 const getAccounts = async (role) => {
