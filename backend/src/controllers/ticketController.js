@@ -3,11 +3,11 @@ const History = require("../models/History");
 const Assignment = require("../models/Assignment");
 const ResponseAPI = require("../utils/response");
 const fs = require("fs");
-const env = require("../config/env");
-const FormData = require("form-data");
 const { imageUpload } = require("../utils/imageUtil");
 const { console } = require("inspector");
 const ROLES = require("../constant/roles");
+const STATUES = require("../constant/statues");
+const PRIORITIES = require("../constant/priorities");
 
 const ticketController = {
   async createTicket(req, res, next) {
@@ -103,7 +103,6 @@ const ticketController = {
         {
           $unwind: { path: "$category", preserveNullAndEmptyArrays: true },
         },
-
         {
           $lookup: {
             from: "users",
@@ -153,11 +152,26 @@ const ticketController = {
                 0,
               ],
             },
+
+            statusIndex: { $indexOfArray: [Object.values(STATUES), "$status"] },
+            priorityIndex: {
+              $indexOfArray: [Object.values(PRIORITIES), "$priority"],
+            },
           },
         },
+
         ...(matchConditions.length > 0
           ? [{ $match: { $and: matchConditions } }]
           : []),
+
+        {
+          $sort: {
+            statusIndex: 1,
+            priorityIndex: -1,
+            createdAt: -1,
+          },
+        },
+
         {
           $project: {
             _id: 1,

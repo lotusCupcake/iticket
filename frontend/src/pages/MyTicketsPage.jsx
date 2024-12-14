@@ -6,6 +6,7 @@ import {
   CardHeader,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Icon,
   Input,
@@ -180,7 +181,21 @@ const MyTicketPage = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files?.[0]) {
-      setFormData((prev) => ({ ...prev, attachment: e.target.files[0] }));
+      const file = e.target.files[0];
+      const fileSizeInMB = (file.size / 1024 / 1024).toFixed(2);
+
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "File too large!",
+          description: `The maximum file size is 2MB. Selected file is ${fileSizeInMB}MB`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        });
+        return;
+      }
+      setFormData((prev) => ({ ...prev, attachment: file }));
     }
   };
 
@@ -391,6 +406,7 @@ const MyTicketPage = () => {
                   focusBorderColor="lightBlue"
                   onChange={handleFileChange}
                 />
+                <FormHelperText>Maximum file size is 2MB</FormHelperText>
               </FormControl>
             </ModalBody>
             <ModalFooter>
@@ -533,7 +549,7 @@ const MyTicketPage = () => {
             <FormControl>
               <FormLabel>Resolution</FormLabel>
               <Textarea
-                value={record.resolution}
+                value={record.resolution ? record.resolution : "-"}
                 focusBorderColor="lightBlue"
               />
             </FormControl>

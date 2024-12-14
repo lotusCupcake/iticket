@@ -7,6 +7,7 @@ import {
   CardHeader,
   Flex,
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   Text,
@@ -22,20 +23,28 @@ const ProfilePage = () => {
   const user = useUserStore((state) => state.user);
   const fetchProfile = useUserStore((state) => state.fetchProfile);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   const [formValues, setFormValues] = useState({
-    name: user?.name || "",
+    name: "",
     password: "",
     photo: null,
   });
+  const [loading, setLoading] = useState(false);
 
   const toast = useToast();
 
+  useEffect(() => {
+    if (user) {
+      setFormValues({
+        name: user.name || "",
+        password: "",
+        photo: null,
+      });
+    }
+  }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const data = new FormData();
     data.append("name", formValues.name);
@@ -46,7 +55,7 @@ const ProfilePage = () => {
       await userApi.updateProfile(data);
 
       toast({
-        title: "Success updated profile!",
+        title: "Profile updated successfully!",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -56,12 +65,16 @@ const ProfilePage = () => {
       fetchProfile();
     } catch (error) {
       toast({
-        title: "Oops, something went wrong!, " + error.response.data.message,
+        title: "Failed to update profile!",
+        description:
+          error.response?.data?.message || "An unexpected error occurred.",
         status: "error",
         duration: 3000,
         isClosable: true,
         position: "top-right",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,7 +88,23 @@ const ProfilePage = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files?.[0]) {
-      setFormValues((prev) => ({ ...prev, photo: e.target.files[0] }));
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: "File too large!",
+          description: `The maximum file size is 2MB. Selected file is ${(
+            file.size /
+            1024 /
+            1024
+          ).toFixed(2)}MB`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "top-right",
+        });
+        return;
+      }
+      setFormValues((prev) => ({ ...prev, photo: file }));
     }
   };
 
@@ -85,9 +114,13 @@ const ProfilePage = () => {
         <CardHeader>
           <Flex alignItems="center" justifyContent="center">
             <Avatar
-              name={user?.name}
+              name={formValues.name}
               size="xl"
-              src={user?.photo}
+              src={
+                formValues.photo
+                  ? URL.createObjectURL(formValues.photo)
+                  : user?.photo
+              }
               shadow={"md"}
             />
           </Flex>
@@ -107,23 +140,23 @@ const ProfilePage = () => {
                 focusBorderColor="lightBlue"
                 onChange={handleFileChange}
               />
+              <FormHelperText>Maximum file size is 2MB</FormHelperText>
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Name</FormLabel>
               <Input
                 name="name"
                 focusBorderColor="lightBlue"
-                defaultValue={user?.name}
                 value={formValues.name}
                 onChange={handleChange}
               />
-            </FormControl>{" "}
+            </FormControl>
             <FormControl isRequired>
               <FormLabel>Email</FormLabel>
               <Input
                 name="email"
                 focusBorderColor="lightBlue"
-                defaultValue={user?.email}
+                value={user?.email}
                 disabled
               />
             </FormControl>
@@ -132,7 +165,7 @@ const ProfilePage = () => {
               <Input
                 name="role"
                 focusBorderColor="lightBlue"
-                defaultValue={user?.role}
+                value={user?.role}
                 disabled
               />
             </FormControl>
@@ -165,6 +198,7 @@ const ProfilePage = () => {
                 _hover={{ bg: "darkBlue" }}
                 size="md"
                 type="submit"
+                isLoading={loading}
               >
                 Update
               </Button>

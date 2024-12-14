@@ -218,6 +218,13 @@ const AssignIssuesPage = () => {
         return value ? value : <Text color="red">UNASSIGN</Text>;
       },
     }),
+    columnHelper.accessor("assignments.resolution", {
+      header: "Resolution",
+      cell: (info) => {
+        const value = info.getValue();
+        return value ? value : "-";
+      },
+    }),
     columnHelper.accessor("actions", {
       header: "Actions",
       cell: (info) => (

@@ -50,9 +50,9 @@ ITicket hadir sebagai solusi platform online untuk mempermudah proses pelaporan 
 
 ## ✨ **Tim Pengembang**
 
-- **M. Fikri Ansari** - Captain / Fullstack Developer
-- **Rifki Ardiansah** - Co-Captain / Backend Developer
-- **Lenida Nathania Ivana Sitorus** - UI/UX Designer
-- **Aqshal Bintang Kurniawan** - QA & Documentation Manager
+- [**M. Fikri Ansari**](https://www.linkedin.com/in/m-fikri-ansari/) - Captain / Fullstack Developer
+- [**Rifki Ardiansah**](https://www.linkedin.com/in/rifki-ardiansah-56658a287) - Co-Captain / Backend Developer
+- [**Lenida Nathania Ivana Sitorus**](https://www.linkedin.com/in/lenida-nathania-ivana-sitorus-475629248) - UI/UX Designer
+- [**Aqshal Bintang Kurniawan**](https://id.linkedin.com/in/aqshal-bintang-kurniawan-569577322) - QA & Documentation Manager
 
 Terima kasih telah menggunakan ITicket! 🚀
