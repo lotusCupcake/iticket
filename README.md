@@ -52,7 +52,7 @@ ITicket hadir sebagai solusi platform online untuk mempermudah proses pelaporan 
 
 Proyek ini terdiri dari dua folder utama: **backend** dan **frontend**. Berikut langkah-langkah untuk menjalankan proyek secara lokal.
 
-### 1. Menjalankan Backend
+### Menjalankan Backend
 
 1. Navigasi ke folder `backend`.
 2. Buat file **.env** berdasarkan file **.env.example** berikut:
@@ -74,7 +74,7 @@ Proyek ini terdiri dari dua folder utama: **backend** dan **frontend**. Berikut 
    Perintah `npm run seed` digunakan untuk mengisi data awal ke dalam database.
    Perintah `npm run dev` digunakan untuk menjalankan server backend.
 
-### 2. Menjalankan Frontend
+### Menjalankan Frontend
 
 1. Navigasi ke folder `frontend`.
 2. Buat file **.env** berdasarkan file **.env.example** berikut:
