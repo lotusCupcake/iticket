@@ -12,13 +12,27 @@ const PRIORITIES = require("../constant/priorities");
 const ticketController = {
   async createTicket(req, res, next) {
     try {
+      const { file } = req;
+      const fileSizeInMB = (file?.size || 0) / 1024 / 1024;
+      const fileType = file?.mimetype.split("/")[0];
+
+      if (fileSizeInMB > 2) {
+        await fs.promises.unlink(file.path);
+        return ResponseAPI.error(res, "File size exceeds 2MB", 400);
+      }
+
+      if (fileType !== "image") {
+        await fs.promises.unlink(file.path);
+        return ResponseAPI.error(res, "File must be an image", 400);
+      }
+
       const ticket = await Ticket.create({
         ...req.body,
         userId: req.user._id,
       });
 
-      if (req.file) {
-        const urlUploadResult = await imageUpload(req.file);
+      if (file) {
+        const urlUploadResult = await imageUpload(file);
         ticket.attachment = urlUploadResult;
       }
 

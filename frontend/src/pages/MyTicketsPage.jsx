@@ -183,16 +183,28 @@ const MyTicketPage = () => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
       const fileSizeInMB = (file.size / 1024 / 1024).toFixed(2);
-
-      if (file.size > 2 * 1024 * 1024) {
+      if (!file.type.includes("image")) {
         toast({
-          title: "File too large!",
-          description: `The maximum file size is 2MB. Selected file is ${fileSizeInMB}MB`,
+          title: `File must be an image! You selected a ${
+            file.type.split("/")[1]
+          }`,
           status: "error",
-          duration: 5000,
+          duration: 3000,
           isClosable: true,
           position: "top-right",
         });
+        e.target.value = "";
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: `File too large! The maximum file size is 2MB. Selected file is ${fileSizeInMB}MB`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+        e.target.value = "";
         return;
       }
       setFormData((prev) => ({ ...prev, attachment: file }));
