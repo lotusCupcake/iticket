@@ -1,4 +1,5 @@
 const Category = require("../models/Category");
+const Ticket = require("../models/Ticket");
 const ResponseAPI = require("../utils/response");
 
 const categoryController = {
@@ -81,6 +82,15 @@ const categoryController = {
 
       if (!id) {
         return ResponseAPI.error(res, "ID not provided", 400);
+      }
+
+      const tickets = await Ticket.find({ categoryId: id });
+      if (tickets.length > 0) {
+        return ResponseAPI.error(
+          res,
+          "Category can't be deleted, there are tickets with this category",
+          400
+        );
       }
 
       const category = await Category.findByIdAndDelete(id);
